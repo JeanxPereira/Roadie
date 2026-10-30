@@ -12,9 +12,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
 
@@ -28,9 +28,9 @@ jobs:
 
       - name: Cache Blender
         id: blender
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
-          path: blender
+          path: .blender-bin
           key: blender-${{ env.BLENDER_VERSION }}-linux-x64
 
       - name: Download Blender
@@ -38,15 +38,15 @@ jobs:
         run: |
           v="${BLENDER_VERSION%.*}"
           curl -fsSL "https://download.blender.org/release/Blender${v}/blender-${BLENDER_VERSION}-linux-x64.tar.xz" | tar -xJ
-          mv "blender-${BLENDER_VERSION}-linux-x64" blender
+          mv "blender-${BLENDER_VERSION}-linux-x64" .blender-bin
 
       - name: Blender runtime libraries
         run: sudo apt-get update -qq && sudo apt-get install -y -qq libxi6 libxkbcommon0 libxxf86vm1 libxfixes3 libxrender1 libgl1 libsm6 libegl1
 
       - name: Validate and enable the extension
-        run: sh tools/ci_blender.sh blender/blender dist/brutal_legend-*.zip
+        run: sh tools/ci_blender.sh .blender-bin/blender dist/brutal_legend-*.zip
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: extension
           path: dist/*.zip
