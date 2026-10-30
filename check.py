@@ -8,9 +8,10 @@ import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-GATES = ["tests/corpus_dfpf.py", "tests/corpus_mesh.py", "tests/corpus_rig_tex.py",
-         "tests/corpus_material.py", "tests/corpus_textobj.py", "tests/corpus_anim.py",
-         "tests/corpus_shaders.py", "tests/corpus_gfx.py"]
+GATES = ["Tests/corpus_dfpf.py", "Tests/corpus_mesh.py", "Tests/corpus_rig_tex.py",
+         "Tests/corpus_material.py", "Tests/corpus_textobj.py", "Tests/corpus_anim.py",
+         "Tests/corpus_shaders.py", "Tests/corpus_gfx.py", "Tests/corpus_ttf.py",
+         "Tests/corpus_render.py"]
 
 
 def run(cmd):
@@ -22,7 +23,7 @@ def main():
     failed = [g for g in GATES if os.path.exists(os.path.join(ROOT, g)) and run([sys.executable, g])]
     if "--blender" in sys.argv:
         out = os.path.join(ROOT, ".evidence", "renders", "check.png")
-        if run(["sh", "tools/blender.sh", "--python", "tests/blender/smoke.py", "--", out,
+        if run(["sh", "Tools/blender.sh", "--python", "Tests/Blender/smoke.py", "--", out,
                 "characters/bipeds/a01_avatar/rig/a01_avatar"]):
             failed.append("blender smoke")
     print("FAIL: " + ", ".join(failed) if failed else "ALL GATES PASS")

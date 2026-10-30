@@ -18,13 +18,13 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Compile (brutal/ must stay stdlib-only Python 3.11)
+      - name: Compile (Brutal/ must stay stdlib-only Python 3.11)
         run: |
-          python -m compileall -q brutal blender tools tests check.py
-          python -c "import brutal.dfpf, brutal.mesh, brutal.rig, brutal.texture, brutal.material, brutal.textobj, brutal.anim, brutal.shaders, brutal.rsalight, brutal.gfx"
+          python -m compileall -q Brutal Blender Tools Tests check.py
+          python -c "import Brutal.dfpf, Brutal.mesh, Brutal.rig, Brutal.texture, Brutal.material, Brutal.textobj, Brutal.anim, Brutal.shaders, Brutal.rsalight, Brutal.gfx"
 
       - name: Build extension
-        run: python tools/build_addon.py
+        run: python Tools/build_addon.py
 
       - name: Cache Blender
         id: blender
@@ -44,7 +44,7 @@ jobs:
         run: sudo apt-get update -qq && sudo apt-get install -y -qq libxi6 libxkbcommon0 libxxf86vm1 libxfixes3 libxrender1 libgl1 libsm6 libegl1
 
       - name: Validate and enable the extension
-        run: sh tools/ci_blender.sh .blender-bin/blender dist/brutal_legend-*.zip
+        run: sh Tools/ci_blender.sh .blender-bin/blender dist/brutal_legend-*.zip
 
       - uses: actions/upload-artifact@v7
         with:

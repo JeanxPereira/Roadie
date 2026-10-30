@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/img/banner.svg" alt="Roadie: models, rigs, materials, animation, light and UI out of Brütal Legend, into Blender 5.2" width="100%">
+<img src="Docs/Images/banner.svg" alt="Roadie: models, rigs, materials, animation, light and UI out of Brütal Legend, into Blender 5.2" width="100%">
 
 ![platform](https://img.shields.io/badge/platform-Windows-0b0a0a?style=flat-square)
 ![python](https://img.shields.io/badge/Python-3.11%2B%20stdlib-0b0a0a?style=flat-square)
@@ -11,7 +11,7 @@
 
 </div>
 
-## <img src="docs/img/h-name.svg" alt="The name" width="100%">
+## <img src="Docs/Images/h-name.svg" alt="The name" width="100%">
 
 In the game's own legends, the First Ones lured Ormagöden, the Fire Beast, down to the earth and
 tried to smother him in mud; he exploded like a sun, his blood became the oceans, and his death gave
@@ -24,19 +24,19 @@ tables tag every one of Eddie's lines `ROAD`.
 bundles and sets them up in Blender, models, skeletons, materials, the game's own lighting, every
 animation, and the UI.
 
-## <img src="docs/img/h-how.svg" alt="How a piece is made" width="100%">
+## <img src="Docs/Images/h-how.svg" alt="How a piece is made" width="100%">
 
 Each format is taken from two sources at once: the bundles in `Win/Packs` (71,095 resources) and
 `BrutalLegend.exe` under IDA 9.4 headless. A field is only written down when a **corpus gate**
 proves it over every resource of its type: byte budgets that close exactly, headers that match the
 size the game's own packer recorded, indices that stay in range. Then it becomes a decoder in
-`brutal/`, and the Blender extension builds on the decoder.
+`Brutal/`, and the Blender extension builds on the decoder.
 
-<p align="center"><img src="docs/img/pipeline.svg" alt="pipeline" width="100%"></p>
+<p align="center"><img src="Docs/Images/pipeline.svg" alt="pipeline" width="100%"></p>
 
-## <img src="docs/img/h-progress.svg" alt="Progress" width="100%">
+## <img src="Docs/Images/h-progress.svg" alt="Progress" width="100%">
 
-<p align="center"><img src="docs/img/progress.svg" alt="resource support" width="100%"></p>
+<p align="center"><img src="Docs/Images/progress.svg" alt="resource support" width="100%"></p>
 
 | Gate | Result |
 |---|---|
@@ -52,23 +52,23 @@ size the game's own packer recorded, indices that stay in range. Then it becomes
 | Shader containers parse, every material resolves to a technique | 12 · 2,748 / 2,748 |
 | UI movies parse to their length, external images resolve | 80 / 80 · 1,664 / 1,664 |
 
-## <img src="docs/img/h-build.svg" alt="Build" width="100%">
+## <img src="Docs/Images/h-build.svg" alt="Build" width="100%">
 
 ```sh
 python check.py                    # every corpus gate (needs the game)
 python check.py --blender          # + import smoke test in the pinned Blender 5.2.3
-python tools/build_addon.py        # dist/brutal_legend-<ver>.zip
-python tools/readme_art.py         # this README's art, from the game's own fonts and emblems
+python Tools/build_addon.py        # dist/brutal_legend-<ver>.zip
+python Tools/readme_art.py         # this README's art, from the game's own fonts and emblems
 ```
 
-A release is a tag: bump `version` in `blender/brutal_legend/blender_manifest.toml`, push
+A release is a tag: bump `version` in `Blender/BrutalLegend/blender_manifest.toml`, push
 `vX.Y.Z`, and the release workflow validates the extension in Blender 5.2.3, attaches the zip to a
 GitHub release and republishes the extensions repository on GitHub Pages. CI runs on every push
 without the game: compile, build, Blender's manifest validation and a headless install + enable.
 
-The game path defaults to the Steam library in `brutal/paths.py`; override with `BL_GAME_DIR`.
+The game path defaults to the Steam library in `Brutal/paths.py`; override with `BL_GAME_DIR`.
 
-## <img src="docs/img/h-use.svg" alt="Use" width="100%">
+## <img src="Docs/Images/h-use.svg" alt="Use" width="100%">
 
 **Install**: in Blender 5.2, *Edit › Preferences › Get Extensions › Repositories › +* (remote)
 and add `https://jeanxpereira.github.io/Roadie/index.json`. Blender then installs Roadie and
@@ -87,13 +87,15 @@ everything including cutscenes and mounts) and click through them in the sidebar
 **Command line**
 
 ```sh
-python -m brutal types
-python -m brutal ls "*a01_avatar/rig/*"
-python -m brutal info characters/bipeds/a01_avatar/rig/a01_avatar.Mesh
-python -m brutal extract "*a01_avatar/textures/*" -t Texture -o out --convert
+python -m Brutal types
+python -m Brutal ls "*a01_avatar/rig/*"
+python -m Brutal info characters/bipeds/a01_avatar/rig/a01_avatar.Mesh
+python -m Brutal extract "*a01_avatar/textures/*" -t Texture -o out --convert
+python -m Brutal ui fonts -o fonts
+python -m Brutal ui render Pause -o pause.svg --label justMenu --settle
 ```
 
-## <img src="docs/img/h-ui.svg" alt="The UI" width="100%">
+## <img src="Docs/Images/h-ui.svg" alt="The UI" width="100%">
 
 The interface is Scaleform GFx. Each screen is a `DUIMovie` resource that names a SWF 8 movie on
 disk (`Data/UI/<Screen>/Opt/<Screen>.gfx`, zlib-packed as `CFX`) and the textures it draws with.
@@ -102,6 +104,8 @@ The movies carry no pixels: every bitmap is a Scaleform external image whose fil
 `EnglishFonts.gfx`, which `FlashConfig` maps to the names the screens ask for: `$Fancy` is the
 blackletter **Schreibweise**, `$Menu` is **TG_Menu**, `$Condensed` is **TG_Condensed**. The banner
 and headers above are set in those three fonts, decoded from that movie.
+`ui fonts` writes them out as TrueType; `ui render` draws a frame of any screen to SVG with its
+textures and text (scripted state aside: the game's ActionScript is not run).
 
 At run time the game links Scaleform GFx 2.1.57 with its Direct3D 9 renderer. Movies are opened
 from the bundles, not from disk, and their images are bound to the game's own textures. The
@@ -110,17 +114,17 @@ key events. Screens call back through `fscommand`: four native commands (line-co
 native resolution, disable) and a bridge that runs Lua (`game.*`, `profile.*`, `flash.*`) and
 writes the result back into an ActionScript variable. Text keys `*<LineCode>` are replaced from
 the string tables, with controller glyphs inlined from `PhysicalInputIcons`. The whole path, with
-IDA addresses: [docs/formats/ui.md](docs/formats/ui.md).
+IDA addresses: [Docs/Formats/ui.md](Docs/Formats/ui.md).
 
-## <img src="docs/img/h-where.svg" alt="Where to look" width="100%">
+## <img src="Docs/Images/h-where.svg" alt="Where to look" width="100%">
 
 | What | Where |
 |---|---|
-| Format reference | [docs/formats.md](docs/formats.md), [anim](docs/formats/anim.md), [shaders](docs/formats/shaders.md), [ui](docs/formats/ui.md) |
-| Asset roadmap | [docs/assets.md](docs/assets.md) |
-| Decoders | `brutal/` |
-| Gates | `tests/`, `check.py` |
-| Blender extension | `blender/brutal_legend/` |
-| IDA headless tooling | `tools/ida/` |
+| Format reference | [Docs/formats.md](Docs/formats.md), [anim](Docs/Formats/anim.md), [shaders](Docs/Formats/shaders.md), [ui](Docs/Formats/ui.md) |
+| Asset roadmap | [Docs/assets.md](Docs/assets.md) |
+| Decoders | `Brutal/` |
+| Gates | `Tests/`, `check.py` |
+| Blender extension | `Blender/BrutalLegend/` |
+| IDA headless tooling | `Tools/Ida/` |
 
 <div align="center"><sub>Made by JeanxPereira · GPL-3.0 · Brütal Legend and its lettering and emblems belong to Double Fine Productions; Roadie is a fan project and ships no game data</sub></div>

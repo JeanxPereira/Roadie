@@ -1,6 +1,6 @@
 name: Release
 
-# Push a tag vX.Y.Z whose version matches blender/brutal_legend/blender_manifest.toml:
+# Push a tag vX.Y.Z whose version matches Blender/BrutalLegend/blender_manifest.toml:
 # the extension is built, validated, attached to a GitHub release, and published as a Blender
 # extensions repository on GitHub Pages (add its index.json URL under Preferences > Get Extensions
 # > Repositories and Blender offers updates by itself).
@@ -36,12 +36,12 @@ jobs:
 
       - name: Tag matches manifest version
         run: |
-          v=$(sed -n 's/^version = "\(.*\)"/\1/p' blender/brutal_legend/blender_manifest.toml)
+          v=$(sed -n 's/^version = "\(.*\)"/\1/p' Blender/BrutalLegend/blender_manifest.toml)
           test "v$v" = "$GITHUB_REF_NAME" || { echo "tag $GITHUB_REF_NAME != manifest v$v"; exit 1; }
           echo "VERSION=$v" >> "$GITHUB_ENV"
 
       - name: Build extension
-        run: python tools/build_addon.py
+        run: python Tools/build_addon.py
 
       - name: Cache Blender
         id: blender
@@ -61,7 +61,7 @@ jobs:
         run: sudo apt-get update -qq && sudo apt-get install -y -qq libxi6 libxkbcommon0 libxxf86vm1 libxfixes3 libxrender1 libgl1 libsm6 libegl1
 
       - name: Validate and enable the extension
-        run: sh tools/ci_blender.sh .blender-bin/blender dist/brutal_legend-*.zip
+        run: sh Tools/ci_blender.sh .blender-bin/blender dist/brutal_legend-*.zip
 
       - name: GitHub release
         env:
