@@ -1,0 +1,8 @@
+# Evidence never goes to git: IDA databases, decompiles, Blender, renders, extracted game data.
+.evidence/
+dist/
+__pycache__/
+*.pyc
+*.blend1
+# Third-party references (DoubleFine Explorer, MPL-2.0; Noesis script): kept locally, not redistributed.
+References/

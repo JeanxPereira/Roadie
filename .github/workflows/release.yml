@@ -1,0 +1,85 @@
+name: Release
+
+# Push a tag vX.Y.Z whose version matches blender/brutal_legend/blender_manifest.toml:
+# the extension is built, validated, attached to a GitHub release, and published as a Blender
+# extensions repository on GitHub Pages (add its index.json URL under Preferences > Get Extensions
+# > Repositories and Blender offers updates by itself).
+
+on:
+  push:
+    tags: ["v*"]
+
+env:
+  BLENDER_VERSION: "5.2.3"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Tag matches manifest version
+        run: |
+          v=$(sed -n 's/^version = "\(.*\)"/\1/p' blender/brutal_legend/blender_manifest.toml)
+          test "v$v" = "$GITHUB_REF_NAME" || { echo "tag $GITHUB_REF_NAME != manifest v$v"; exit 1; }
+          echo "VERSION=$v" >> "$GITHUB_ENV"
+
+      - name: Build extension
+        run: python tools/build_addon.py
+
+      - name: Cache Blender
+        id: blender
+        uses: actions/cache@v4
+        with:
+          path: blender
+          key: blender-${{ env.BLENDER_VERSION }}-linux-x64
+
+      - name: Download Blender
+        if: steps.blender.outputs.cache-hit != 'true'
+        run: |
+          v="${BLENDER_VERSION%.*}"
+          curl -fsSL "https://download.blender.org/release/Blender${v}/blender-${BLENDER_VERSION}-linux-x64.tar.xz" | tar -xJ
+          mv "blender-${BLENDER_VERSION}-linux-x64" blender
+
+      - name: Blender runtime libraries
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq libxi6 libxkbcommon0 libxxf86vm1 libxfixes3 libxrender1 libgl1 libsm6 libegl1
+
+      - name: Validate and enable the extension
+        run: sh tools/ci_blender.sh blender/blender dist/brutal_legend-*.zip
+
+      - name: GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/brutal_legend-*.zip \
+            --title "Roadie $VERSION" --generate-notes \
+            --notes "Install: Blender 5.2 > Edit > Preferences > Get Extensions > Install from Disk > brutal_legend-$VERSION.zip. Or add the repository https://${GITHUB_REPOSITORY_OWNER,,}.github.io/${GITHUB_REPOSITORY#*/}/index.json to get updates inside Blender. Needs a Brütal Legend (PC) install."
+
+      - name: Extensions repository
+        run: |
+          mkdir -p site
+          cp dist/brutal_legend-*.zip site/
+          blender/blender --factory-startup --command extension server-generate --repo-dir=site --html
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v4
