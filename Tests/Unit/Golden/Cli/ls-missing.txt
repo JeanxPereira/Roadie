@@ -1,0 +1,4 @@
+exit 2
+--- stdout
+--- stderr
+no Brutal Legend bundles at <game>\nowhere (use --game or BL_GAME_DIR)

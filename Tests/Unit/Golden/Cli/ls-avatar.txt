@@ -1,0 +1,6 @@
+exit 0
+--- stdout
+characters/bipeds/a01_avatar/a01_avatar.Mesh
+characters/bipeds/a01_avatar/a01_avatar.Skeleton
+worlds/w1/avatar_tex.Texture
+--- stderr
