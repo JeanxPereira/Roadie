@@ -1,6 +1,6 @@
 # AnimResource (skeletal animation)
 
-Decoder: `Brutal/anim.py`. Gate: `Tests/corpus_anim.py`. Addresses are `BrutalLegend.exe`
+Decoder: `Blender/BrutalLegend/Brutal/anim.py`. Gate: `Tests/corpus_anim.py`. Addresses are `BrutalLegend.exe`
 (Steam build); every function named below was renamed in the IDA database
 (`.evidence/ida/BrutalLegend.exe.i64`) — the original `sub_` address is given with each name.
 
@@ -211,7 +211,7 @@ one track each, f32 values, same mask/pool/first-key scheme. `CSA_RootMotionDelt
 vtable +0x1C) differences two samples. It is not part of the bone pose; `Anim.root_motion(frame)`
 returns it.
 
-## 5. API (`Brutal/anim.py`)
+## 5. API (`Blender/BrutalLegend/Brutal/anim.py`)
 
 ```python
 a = anim.parse(data)                 # Anim: rig_hash, fps, frame_count, duration, bone_map, float_map, events

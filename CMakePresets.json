@@ -1,0 +1,21 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 28, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "windows",
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "${sourceDir}/build/windows",
+      "cacheVariables": { "CMAKE_C_COMPILER": "clang-cl", "CMAKE_CXX_COMPILER": "clang-cl" },
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "windows-debug", "configurePreset": "windows", "configuration": "Debug" },
+    { "name": "windows-release", "configurePreset": "windows", "configuration": "Release" }
+  ],
+  "testPresets": [
+    { "name": "windows-debug", "configurePreset": "windows", "configuration": "Debug",
+      "output": { "outputOnFailure": true } }
+  ]
+}

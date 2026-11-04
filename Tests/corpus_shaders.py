@@ -10,7 +10,7 @@ import os
 import struct
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "Blender", "BrutalLegend"))
 from Brutal import material, rsalight, shaders, textobj  # noqa: E402
 from Brutal.library import Library  # noqa: E402
 

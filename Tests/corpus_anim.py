@@ -1,4 +1,4 @@
-"""Corpus gate for AnimResource (Brutal/anim.py). Full reference: Docs/Formats/anim.md.
+"""Corpus gate for AnimResource (Blender/BrutalLegend/Brutal/anim.py). Full reference: Docs/Formats/anim.md.
 
     python Tests/corpus_anim.py [--step N] [--sample-step M] [--only TEXT]
 
@@ -24,7 +24,7 @@ import os
 import sys
 import time
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "Blender", "BrutalLegend"))
 from Brutal import anim, rig
 from Brutal.library import Library
 

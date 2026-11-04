@@ -1,4 +1,4 @@
-"""Render one frame of a Scaleform movie (`Brutal/gfx.py`) to SVG, from the bundles alone.
+"""Render one frame of a Scaleform movie (`Blender/BrutalLegend/Brutal/gfx.py`) to SVG, from the bundles alone.
 
 What is drawn, in SWF terms (coordinates stay in twips; the root `viewBox` is the movie's frame
 RECT and the pixel size is RECT / 20):
@@ -19,7 +19,7 @@ RECT and the pixel size is RECT / 20):
   external image (pixel space through the fill matrix), the image possibly imported;
 - DefineMorphShape/2 interpolated at the placement ratio;
 - DefineExternalImage: the Texture found through the movie's `DUIMovie` by the lower-cased stem of
-  the file name, decoded (DXT1/DXT5, `Brutal/image.py`) and embedded as a PNG data URI, cropped to
+  the file name, decoded (DXT1/DXT5, `Blender/BrutalLegend/Brutal/image.py`) and embedded as a PNG data URI, cropped to
   the image size; also placed directly when an image is a display-list character;
 - ImportAssets2: `gfxfontlib.swf` names resolve through `FlashConfig.FontMap` to the shared font
   movie; `Shared/ControllerIcons.swf` resolves to `PhysicalInputIcons.gfx` (the game's file-opener

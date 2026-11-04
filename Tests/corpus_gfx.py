@@ -1,4 +1,4 @@
-"""Corpus gate for the UI movies (`Brutal/gfx.py`).
+"""Corpus gate for the UI movies (`Blender/BrutalLegend/Brutal/gfx.py`).
 
 - every `.gfx` Blob in the bundles parses; its tag stream ends with End exactly at the header length
   and the bundle copy is byte-identical to `Data/UI/.../Opt/*.gfx` on disk;
@@ -12,7 +12,7 @@ import collections
 import os
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "Blender", "BrutalLegend"))
 from Brutal import gfx, paths, texture, textobj
 from Brutal.library import Library
 

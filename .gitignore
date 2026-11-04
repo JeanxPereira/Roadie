@@ -7,3 +7,5 @@ __pycache__/
 # Third-party references (DoubleFine Explorer, MPL-2.0; Noesis script): kept locally, not redistributed.
 References/
 .blender-bin/
+build/
+*.actual

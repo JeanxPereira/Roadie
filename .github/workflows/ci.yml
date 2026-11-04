@@ -18,10 +18,10 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Compile (Brutal/ must stay stdlib-only Python 3.11)
+      - name: Compile (Blender/BrutalLegend/Brutal/ must stay stdlib-only Python 3.11)
         run: |
-          python -m compileall -q Brutal Blender Tools Tests check.py
-          python -c "import Brutal.dfpf, Brutal.mesh, Brutal.rig, Brutal.texture, Brutal.material, Brutal.textobj, Brutal.anim, Brutal.shaders, Brutal.rsalight, Brutal.gfx"
+          python -m compileall -q Blender Tools Tests check.py
+          PYTHONPATH=Blender/BrutalLegend python -c "import Brutal.dfpf, Brutal.mesh, Brutal.rig, Brutal.texture, Brutal.material, Brutal.textobj, Brutal.anim, Brutal.shaders, Brutal.rsalight, Brutal.gfx"
 
       - name: Build extension
         run: python Tools/build_addon.py

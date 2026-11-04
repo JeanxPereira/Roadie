@@ -1,0 +1,9 @@
+exit 0
+--- stdout
+characters/bipeds/a01_avatar/a01_avatar.Mesh
+characters/bipeds/a01_avatar/a01_avatar.Skeleton
+characters/props/crate.Mesh
+ui/hud.Movie
+worlds/w1/avatar_tex.Texture
+worlds/w1/tex.Texture
+--- stderr

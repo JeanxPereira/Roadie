@@ -1,0 +1,5 @@
+exit 0
+--- stdout
+worlds/w1/avatar_tex.Texture
+worlds/w1/tex.Texture
+--- stderr

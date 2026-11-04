@@ -1,4 +1,4 @@
-"""Corpus gate for the movie renderer (`Brutal/gfxsvg.py`) and the pixel helpers (`Brutal/image.py`).
+"""Corpus gate for the movie renderer (`Blender/BrutalLegend/Brutal/gfxsvg.py`) and the pixel helpers (`Blender/BrutalLegend/Brutal/image.py`).
 
 - every character and control tag of every movie, root and nested sprites, decodes to exactly its
   tag length: DefineShape/2/3/4, DefineMorphShape/2, DefineEditText, PlaceObject2/3 (up to clip
@@ -26,7 +26,7 @@ import tempfile
 import xml.etree.ElementTree as ET
 import zlib
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "Blender", "BrutalLegend"))
 from Brutal import gfx, gfxsvg, image, texture
 from Brutal.library import Library
 
