@@ -1,6 +1,6 @@
 #include "Verbs.h"
 
-#include "InstallPath.h"
+#include <Brutal/InstallPath.h>
 
 #include <Brutal/Install.h>
 #include <Brutal/Texture.h>
@@ -140,8 +140,8 @@ bool ParseArgs(std::span<const std::string_view> args, bool wantPattern, bool wa
 }
 
 std::shared_ptr<const Brutal::Install> OpenInstall(Modules::Workspace& ws, const Options& o, std::ostream& err) {
-    const fs::path given = o.game ? Services::Paths::FromUtf8(*o.game) : DefaultInstall();
-    const auto header = ResolveInstallPath(given);
+    const fs::path given = o.game ? Services::Paths::FromUtf8(*o.game) : Brutal::DefaultInstall();
+    const auto header = Brutal::ResolveInstallPath(given);
     if (!header) {
         err << "no Brutal Legend bundles at " << Services::Paths::ToUtf8(given) << " (use --game or BL_GAME_DIR)\n";
         return nullptr;
@@ -250,10 +250,15 @@ int Extract(Modules::Workspace& ws, const Cli::VerbTable&, std::span<const std::
         }
         std::span<const std::byte> data = *bytes;
         if (o.convert && rec.type == "Texture") {
-            Services::DiagSink texDiags;  // not a DDS (an rsalight): written as stored
+            Services::DiagSink texDiags;  // an rsalight is not a DDS: written as stored
             if (const auto dds = Brutal::Texture::Dds(*bytes, texDiags, rec.Path())) {
                 data = *dds;
                 rel = rec.name + ".dds";
+            } else if (!Brutal::Texture::IsRsaLight(rec.Path())) {
+                // Still written raw (the Python CLI does the same), but say why it is not a .dds.
+                const auto d = texDiags.Snapshot();
+                err << rec.Path() << ": not converted to .dds (" << (d.empty() ? "no diagnostic" : d.front().message)
+                    << "), written as stored\n";
             }
         }
         const fs::path target = root / Services::Paths::FromUtf8(rel);
@@ -285,7 +290,8 @@ int Digest(Modules::Workspace& ws, const Cli::VerbTable&, std::span<const std::s
     ForEachRecord(*install, [&](const Brutal::Dfpf::Record& rec, const Brutal::RecordRef& ref) {
         const std::string path = rec.Path();
         lines.push_back("R\t" + path + '\t' + std::to_string(unsigned(rec.compression)) + '\t' +
-                        std::to_string(rec.headerSize) + '\t' + std::to_string(rec.dataSize));
+                        std::to_string(rec.headerSize) + '\t' + std::to_string(rec.dataSize) + '\t' +
+                        std::to_string(rec.offset) + '\t' + std::to_string(rec.storedSize));
         if (rec.type != "Texture" || Brutal::Texture::IsRsaLight(path)) return;
         Services::DiagSink diags;
         const auto bytes = install->Read(ref, diags);

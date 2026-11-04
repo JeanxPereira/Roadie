@@ -3,7 +3,7 @@ C++ module (`roadie digest`) must agree on every record and every texture, field
 
 Both sides write the same UTF-8 lines, tab-separated, sorted by their bytes:
 
-    R <path> <compression> <headerSize> <dataSize>                                  every record
+    R <path> <compression> <headerSize> <dataSize> <offset> <storedSize>             every record
     T <path> <engineFormat> <width> <height> <mips> <len(dds)> <crc32(dds) 8 hex>   every DDS texture
                                                                                     (rsalights are not DDS: no T line)
 
@@ -12,11 +12,13 @@ per line kind. Docs/formats.md ("Parity") documents the line kinds; each later f
 
     python Tests/parity.py          ROADIE_EXE overrides build/windows/Debug/roadie.exe; BL_GAME_DIR the install
 
-Mutation checks (2026-11-04, both bite, both reverted):
+Mutation checks (2026-11-04, all bite, all reverted):
   * Python texture.info reading width at 0x14 (and height at 0x18) instead of 0x10/0x14: all 10,656
     T lines differ from the C++ side, exit 1.
   * C++ Texture ReadInfo reading width at 0x14 instead of 0x10: the 1,186 T lines whose width differs
     from the height differ from the Python side, exit 1.
+  * Python Entry.offset wrong for non-texture records only (the T lines read textures, so only the R
+    line can see it): 60,410 R lines differ from the C++ side, exit 1.
 """
 import os
 import subprocess
@@ -34,7 +36,7 @@ def python_lines() -> list[bytes]:
     lib = Library()
     lines = []
     for bundle, e in lib.entries():
-        lines.append(f"R\t{e.path}\t{e.compression}\t{e.header_size}\t{e.usize}")
+        lines.append(f"R\t{e.path}\t{e.compression}\t{e.header_size}\t{e.usize}\t{e.offset}\t{e.size}")
         if e.type == "Texture" and not e.path.lower().startswith("lighting/textures/rsalights/"):
             data = bundle.read(e)
             i = texture.info(data)
@@ -56,7 +58,7 @@ def cpp_lines() -> list[bytes]:
     return sorted(l.rstrip(b"\r") for l in p.stdout.split(b"\n") if l)
 
 
-# The measured install facts (globals.md, 2026-11-03): a side that produces fewer lines has lost records.
+# The measured install facts (2026-11-03, the Steam install): a side that produces fewer lines has lost records.
 EXPECTED = {"R": 71095, "T": 10656}
 
 
