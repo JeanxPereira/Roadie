@@ -6,6 +6,7 @@
 
 #include <Onyx/Core/Modules/DecoderRegistry.h>
 #include <Onyx/Core/Modules/Document.h>
+#include <Onyx/Core/Services/Paths.h>
 #include <Onyx/Core/Vfs/OsFile.h>
 
 #include <algorithm>
@@ -18,19 +19,12 @@ using namespace Onyx;
 
 namespace {
 
-// Stands in for a .~p that could not be opened, so file indices stay aligned.
-class EmptyFile final : public Vfs::IFile {
-public:
-    uint64_t Size() const override { return 0; }
-    size_t ReadAt(uint64_t, std::span<std::byte>) const override { return 0; }
-};
-
 void Report(Services::DiagSink& diags, Services::Severity severity, std::string code, std::string message) {
     diags.Report({severity, std::move(code), std::move(message), std::nullopt});
 }
 
 bool IsHeaderFile(const std::filesystem::path& p) {
-    std::string ext = p.extension().string();
+    std::string ext = Services::Paths::ToUtf8(p.extension());
     std::transform(ext.begin(), ext.end(), ext.begin(), [](char c) { return (c >= 'A' && c <= 'Z') ? char(c - 'A' + 'a') : c; });
     return ext == ".~h";
 }
@@ -45,7 +39,7 @@ std::vector<std::filesystem::path> SiblingHeaders(const std::filesystem::path& o
     const auto same = [&](const std::filesystem::path& a) { return std::filesystem::equivalent(a, opened, ec); };
     if (std::none_of(out.begin(), out.end(), same)) out.push_back(opened);
     std::sort(out.begin(), out.end(), [](const std::filesystem::path& a, const std::filesystem::path& b) {
-        return a.filename().string() < b.filename().string();
+        return Services::Paths::ToUtf8(a.filename()) < Services::Paths::ToUtf8(b.filename());
     });
     return out;
 }
@@ -123,7 +117,7 @@ Modules::ParseResult Module::ParseContainer(Modules::ContainerContext& ctx) {
     for (const std::filesystem::path& headerPath : SiblingHeaders(ctx.path)) {
         auto headerFile = Vfs::OsFile::Open(headerPath);
         if (!headerFile.ok()) {
-            Report(ctx.diags, Services::Severity::Error, "bl.dfpf.open", headerPath.filename().string() + ": " + headerFile.error().message);
+            Report(ctx.diags, Services::Severity::Error, "bl.dfpf.open", Services::Paths::ToUtf8(headerPath.filename()) + ": " + headerFile.error().message);
             continue;
         }
         Vfs::Reader reader(headerFile.value());

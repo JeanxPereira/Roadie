@@ -12,6 +12,7 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <string_view>
 #include <tuple>
@@ -22,8 +23,17 @@
 // The bundles of one install as one resource namespace (the Python Library). A resource path is
 // "name.Type" ("characters/bipeds/x.Mesh"); lookup lower-cases it and turns "\" into "/". When two
 // bundles hold the same path the first bundle in sorted file-name order wins (Library.__init__ does
-// setdefault over sorted(glob)); the Steam install has no such path (Tests/Corpus/DfpfGate.cpp).
+// setdefault over sorted(glob)); the Steam install has no such path (Tests/Corpus/DfpfGate.cpp
+// asserts 71,095 distinct lower-cased paths).
 namespace Brutal {
+
+// Stands in for a file that is not there (a .~p that could not be opened, payload slot 0), so file
+// indices stay aligned and no slot is null.
+class EmptyFile final : public Onyx::Vfs::IFile {
+public:
+    uint64_t Size() const override { return 0; }
+    size_t ReadAt(uint64_t, std::span<std::byte>) const override { return 0; }
+};
 
 struct RecordRef {
     uint32_t bundle = 0;
@@ -35,7 +45,7 @@ class Install {
 public:
     std::vector<Dfpf::Bundle> bundles;
     // Indexed by RecordRef::fileIndex, the same index as the document's `files`; slot 0 (the opened
-    // .~h) and the slots of missing payloads hold an empty file.
+    // .~h) and the slots of missing payloads hold an EmptyFile; no slot is null.
     std::vector<std::shared_ptr<const Onyx::Vfs::IFile>> payloads;
     // Per bundle: its .~p could be opened.
     std::vector<bool> payloadPresent;

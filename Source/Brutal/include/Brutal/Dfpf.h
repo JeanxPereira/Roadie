@@ -41,7 +41,7 @@
 //
 // Unpacking (fact, stricter than the Python decoder, which checks no sizes): a raw payload is
 // exactly header + data bytes and a zlib stream inflates to exactly header + data bytes, for all
-// 71,095 records of the Steam install. Gate: Tests/Corpus/DfpfGate.cpp (Task 4). Xmem appears
+// 71,095 records of the Steam install. Gate: Tests/Corpus/DfpfGate.cpp. Xmem appears
 // only in Xbox 360 bundles and is not decoded.
 namespace Brutal::Dfpf {
 

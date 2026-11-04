@@ -11,7 +11,7 @@
 //
 // Mutation (2026-11-03): in Source/Brutal/Texture.cpp Dds(), size check 0x28 + n -> 0x24 + n. The
 // gate fails with dds-failed on all 10,656 DDS records (bl.texture.size) and the count-dds checks;
-// reverting passes again (task 6 report has the output).
+// reverting passes again.
 #include "Corpus.h"
 
 #include <Brutal/Install.h>

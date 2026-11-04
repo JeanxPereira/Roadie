@@ -206,6 +206,14 @@ TEST_CASE("MissingPayload") {
     REQUIRE(doc->roots.size() == 2);
     for (const auto& e : doc->roots) CHECK(Onyx::Domain::HasFlag(e.flags, Onyx::Domain::NodeFlags::Failed));
     CHECK(Count(*doc, "bl.dfpf.payload") == 1);
+    // No payload slot is null: slot 0 (the opened .~h) and the missing .~p hold an empty file.
+    const auto install = std::static_pointer_cast<const Brutal::Install>(doc->moduleState);
+    REQUIRE(install);
+    REQUIRE(install->payloads.size() >= 2);
+    for (const auto& p : install->payloads) {
+        REQUIRE(p);
+        CHECK(p->Size() == 0);
+    }
 }
 
 TEST_CASE("RecordPastPayloadEnd") {

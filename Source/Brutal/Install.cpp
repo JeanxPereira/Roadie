@@ -24,7 +24,9 @@ void Install::Add(Dfpf::Bundle bundle, uint32_t fileIndex, std::shared_ptr<const
     const auto b = uint32_t(bundles.size());
     for (uint32_t r = 0; r < bundle.records.size(); ++r) m_refs.push_back({b, r, fileIndex});
     bundles.push_back(std::move(bundle));
-    payloads.resize(std::max<size_t>(payloads.size(), size_t(fileIndex) + 1));
+    const size_t had = payloads.size();
+    payloads.resize(std::max<size_t>(had, size_t(fileIndex) + 1));
+    for (size_t i = had; i < payloads.size(); ++i) payloads[i] = std::make_shared<EmptyFile>();
     payloads[fileIndex] = std::move(payload);
     payloadPresent.push_back(present);
 }

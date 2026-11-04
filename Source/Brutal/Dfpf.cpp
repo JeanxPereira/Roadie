@@ -1,6 +1,8 @@
 // The format facts live in Brutal/Dfpf.h.
 #include <Brutal/Dfpf.h>
 
+#include <Onyx/Core/Services/Paths.h>
+
 #include <zlib.h>
 
 #include <algorithm>
@@ -54,7 +56,7 @@ std::string TrimTypeName(std::string s) {
 }
 
 Result<Bundle> ParseHeader(Vfs::Reader& header, const std::filesystem::path& headerPath) {
-    const std::string where = headerPath.filename().string();
+    const std::string where = Services::Paths::ToUtf8(headerPath.filename());
     header.Seek(0);
     const std::vector<std::byte> h = header.ReadAll();
     if (h.size() < 5 || std::memcmp(h.data(), "dfpf", 4) != 0) {
@@ -98,7 +100,7 @@ Result<Bundle> ParseHeader(Vfs::Reader& header, const std::filesystem::path& hea
     bundle.headerPath = headerPath;
     bundle.payloadPath = headerPath;
     bundle.payloadPath.replace_extension(".~p");
-    bundle.name = headerPath.stem().string();
+    bundle.name = Services::Paths::ToUtf8(headerPath.stem());
     bundle.records.reserve(count);
     for (uint32_t i = 0; i < count; ++i) {
         const uint64_t r = recOff + uint64_t(i) * 16;
