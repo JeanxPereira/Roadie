@@ -14,3 +14,4 @@ function(corpus_gate name source)
 endfunction()
 
 corpus_gate(DfpfGate DfpfGate.cpp)
+corpus_gate(TextureGate TextureGate.cpp)

@@ -13,7 +13,7 @@
 
 // Texture resources. Record header part = 0x24 bytes, data part = u32 size + a complete DDS. The
 // facts are the docstring of Blender/BrutalLegend/Brutal/texture.py plus the 16-bit formats; the
-// gate is the Task 6 corpus gate: 10,672 records, 16 rsalights, 10,656 DDS.
+// gate is Tests/Corpus/TextureGate.cpp: 10,672 records, 16 rsalights, 10,656 DDS.
 //
 //     0x08  u32 engine format (9 DXT1, 11 DXT5, 5 R5G6B5, 2 A4R4G4B4)
 //     0x10  u32 width

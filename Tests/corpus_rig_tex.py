@@ -1,4 +1,4 @@
-"""Corpus gate for Rig and Texture, plus the Mesh<->Rig contract:
+"""Corpus gate for Rig (Texture is Tests/Corpus/TextureGate.cpp), plus the Mesh<->Rig contract:
 every rigged mesh's bone palette must index inside its rig's bones."""
 import collections
 import glob
@@ -6,7 +6,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "Blender", "BrutalLegend"))
-from Brutal import mesh, rig, texture
+from Brutal import mesh, rig
 from Brutal.dfpf import Bundle
 from Brutal.paths import packs_dir
 
@@ -34,14 +34,6 @@ for b in bundles:
                 n["rig"] += 1
             except Exception as x:
                 fail("rig", e.name, x)
-        elif e.type == "Texture":
-            if e.name.startswith("lighting/textures/rsalights/"):
-                continue  # baked light data, not a DDS texture
-            try:
-                texture.dds(b.read(e))
-                n["texture"] += 1
-            except Exception as x:
-                fail("texture", e.name, x)
 for b in bundles:
     for e in b:
         if e.type == "Mesh" and e.name in rigs:

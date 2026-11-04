@@ -10,7 +10,7 @@ functions they are a serializer pair; which one reads and which writes is not pi
 | Bundle `.~h`/`.~p` (DFPF v5) | 21 | `Source/Brutal/Dfpf.cpp` | `Tests/Corpus/DfpfGate.cpp`: 71,095/71,095 unpack to header+data, 21 bundles, no shared stored range | — |
 | Mesh | 7,711 | `Blender/BrutalLegend/Brutal/mesh.py` | `Tests/corpus_mesh.py`: 7,711/7,711 byte-exact, parsed header = record header | `hsem`/`lrtm` sub_64C5C0, sub_64C860; `tsbs` sub_64D0A0, sub_64D6B0; `BVXD` sub_66A5E0, sub_66A720 |
 | Rig | 302 | `Blender/BrutalLegend/Brutal/rig.py` | `Tests/corpus_rig_tex.py`: 302/302, parents precede children, 301 mesh↔rig palettes in range | — |
-| Texture | 10,672 | `Blender/BrutalLegend/Brutal/texture.py` | 10,656 DDS byte-exact; 16 `rsalights` are another subtype | `rtxT` sub_64E170 |
+| Texture | 10,672 | `Source/Brutal/Texture.cpp` (and `Blender/BrutalLegend/Brutal/texture.py`) | `Tests/Corpus/TextureGate.cpp`: 10,656 DDS decode through the registered decoder (DXT5 5,405, DXT1 1,917, R5G6B5 1,667, A4R4G4B4 1,667; byte size and w/h match); 16 `rsalights` are another subtype, Raw | `rtxT` sub_64E170 |
 | Material | 2,748 | `Blender/BrutalLegend/Brutal/material.py` | `Tests/corpus_material.py`: 2,748 parse, 11,247/11,247 texture refs resolve | — |
 | Text objects (69 types: MeshSet, Weather, LevelData, Cutscene, …) | 11,678 | `Blender/BrutalLegend/Brutal/textobj.py` | `Tests/corpus_textobj.py`: 11,678/11,678 parse | — |
 | UI movie (`.gfx`, Scaleform) + DUIMovie | 80 + 79 | `Blender/BrutalLegend/Brutal/gfx.py` | `Tests/corpus_gfx.py`: 80 parse to their length, bundle = disk, 1,664/1,664 external images resolve, FontMap fonts exist | see [ui.md](Formats/ui.md) |
