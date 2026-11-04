@@ -6,6 +6,7 @@ set(PROJECT_SOURCE_DIR "${onyxsdk_SOURCE_DIR}")
 add_library(RoadieVerbs STATIC Verbs.cpp InstallPath.cpp)
 target_include_directories(RoadieVerbs PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(RoadieVerbs PUBLIC Onyx::Core Brutal::Module)
+target_link_libraries(RoadieVerbs PRIVATE zlibstatic)  # crc32 for the parity digest
 set_target_properties(RoadieVerbs PROPERTIES CXX_SCAN_FOR_MODULES OFF)
 
 add_executable(roadie Main.cpp)

@@ -48,6 +48,18 @@ description the engine parses, the data part is the bulk (vertex buffers, DDS, k
 the `.header` / data split that the old Noesis script expected as two files. Proven on all 71,095
 entries.
 
+## Parity
+
+`Tests/parity.py` keeps the extension's Python decoder (`Blender/BrutalLegend/Brutal/`) and the C++ module
+agreeing: `roadie digest [--game DIR]` and the script both write UTF-8, tab-separated lines sorted by their
+bytes, and the gate compares them line by line (first 5 differences printed, exit 1 on any). Line kinds:
+
+- `R <path> <compression> <headerSize> <dataSize>` for every record (71,095): compression 4/8/12, header and data parts.
+- `T <path> <engineFormat> <width> <height> <mips> <len(dds)> <crc32(dds)>` for every DDS texture (10,656; the 16
+  rsalights are not DDS and have no `T` line); the CRC is 8 lower-case hex digits over the complete DDS.
+
+Each later format adds one line kind here. Gate: `python Tests/parity.py` (also run by `check.py` when the install exists).
+
 ## Mesh
 
 Header part (= record `header_size`, proven on all meshes), little-endian:

@@ -10,6 +10,8 @@
 #include <Onyx/Core/Services/Diagnostics.h>
 #include <Onyx/Core/Services/Paths.h>
 
+#include <zlib.h>
+
 #include <algorithm>
 #include <cstdio>
 #include <fstream>
@@ -270,6 +272,42 @@ int Extract(Modules::Workspace& ws, const Cli::VerbTable&, std::span<const std::
     return failed ? Cli::kPartial : Cli::kOk;
 }
 
+// The parity digest: one line per record and per DDS texture, sorted by bytes. The line kinds are
+// documented in Docs/formats.md ("Parity") and compared with the extension's decoder by Tests/parity.py.
+int Digest(Modules::Workspace& ws, const Cli::VerbTable&, std::span<const std::string_view> args, std::ostream& out,
+           std::ostream& err) {
+    Options o;
+    if (!ParseArgs(args, false, false, o, err)) return Cli::kUsage;
+    const auto install = OpenInstall(ws, o, err);
+    if (!install) return Cli::kNoModule;
+    std::vector<std::string> lines;
+    size_t failed = 0;
+    ForEachRecord(*install, [&](const Brutal::Dfpf::Record& rec, const Brutal::RecordRef& ref) {
+        const std::string path = rec.Path();
+        lines.push_back("R\t" + path + '\t' + std::to_string(unsigned(rec.compression)) + '\t' +
+                        std::to_string(rec.headerSize) + '\t' + std::to_string(rec.dataSize));
+        if (rec.type != "Texture" || Brutal::Texture::IsRsaLight(path)) return;
+        Services::DiagSink diags;
+        const auto bytes = install->Read(ref, diags);
+        const auto info = bytes ? Brutal::Texture::ReadInfo(*bytes) : std::nullopt;
+        const auto dds = bytes ? Brutal::Texture::Dds(*bytes, diags, path) : std::nullopt;
+        if (!info || !dds) {
+            err << path << ": not a readable texture\n";
+            ++failed;
+            return;
+        }
+        const uLong crc = crc32(crc32(0L, Z_NULL, 0), reinterpret_cast<const Bytef*>(dds->data()), uInt(dds->size()));
+        char hex[16];
+        std::snprintf(hex, sizeof hex, "%08lx", crc);
+        lines.push_back("T\t" + path + '\t' + std::to_string(info->engineFormat) + '\t' + std::to_string(info->width) +
+                        '\t' + std::to_string(info->height) + '\t' + std::to_string(info->mips) + '\t' +
+                        std::to_string(dds->size()) + '\t' + hex);
+    });
+    std::sort(lines.begin(), lines.end());
+    for (const std::string& l : lines) out << l << '\n';
+    return failed ? Cli::kPartial : Cli::kOk;
+}
+
 }
 
 std::vector<Onyx::Cli::Verb> Verbs() {
@@ -277,6 +315,7 @@ std::vector<Onyx::Cli::Verb> Verbs() {
         {"types", "[--game DIR]", Types},
         {"ls", "[GLOB] [-t TYPE] [--game DIR]", Ls},
         {"extract", "GLOB -o DIR [--convert] [-t TYPE] [--game DIR]", Extract},
+        {"digest", "[--game DIR]", Digest},
     };
 }
 

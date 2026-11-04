@@ -1,6 +1,6 @@
 """Run every gate. The verdict is the exit code.
 
-    python check.py            C++ build + unit tests, then the corpus gates (needs the game; BL_GAME_DIR)
+    python check.py            C++ build + unit tests, then the corpus gates and the C++/Python parity gate (needs the game; BL_GAME_DIR)
     python check.py --blender  also the Blender 5.2 smoke import (needs .evidence/blender or BL_BLENDER)
 """
 import os
@@ -73,6 +73,10 @@ def main():
     if not failed and os.path.isdir(os.path.join(os.environ.get("BL_GAME_DIR", DEFAULT_GAME_DIR), "Win", "Packs")):
         if run_in_vcvars(["ctest", "--preset", "windows-debug", "-L", "corpus", "--no-tests=error", "-V"]):
             failed.append("corpus (C++)")
+    parity = os.path.join(ROOT, "Tests", "parity.py")
+    if not failed and os.path.exists(parity) and os.path.isdir(os.path.join(os.environ.get("BL_GAME_DIR", DEFAULT_GAME_DIR), "Win", "Packs")):
+        if run([sys.executable, "Tests/parity.py"]):  # after the C++ build: it runs build/windows/Debug/roadie.exe
+            failed.append("parity")
     failed += [g for g in GATES if os.path.exists(os.path.join(ROOT, g)) and run([sys.executable, g])]
     if "--blender" in sys.argv:
         out = os.path.join(ROOT, ".evidence", "renders", "check.png")
