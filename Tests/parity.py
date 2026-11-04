@@ -22,6 +22,7 @@ import os
 import subprocess
 import sys
 import zlib
+from collections import Counter
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 sys.path.insert(0, os.path.join(ROOT, "Blender", "BrutalLegend"))
@@ -55,24 +56,39 @@ def cpp_lines() -> list[bytes]:
     return sorted(l.rstrip(b"\r") for l in p.stdout.split(b"\n") if l)
 
 
+# The measured install facts (globals.md, 2026-11-03): a side that produces fewer lines has lost records.
+EXPECTED = {"R": 71095, "T": 10656}
+
+
+def count_kinds(lines: list[bytes]) -> dict[str, int]:
+    kinds = {k: 0 for k in EXPECTED}
+    for l in lines:
+        kinds[l[:1].decode("latin-1")] = kinds.get(l[:1].decode("latin-1"), 0) + 1
+    return kinds
+
+
 def main() -> int:
-    cpp = cpp_lines()
-    py = python_lines()
-    kinds = {}
-    for l in cpp:
-        kinds[l[:1]] = kinds.get(l[:1], 0) + 1
-    diffs = []
-    for i in range(max(len(cpp), len(py))):
-        a = cpp[i] if i < len(cpp) else None
-        b = py[i] if i < len(py) else None
-        if a != b:
-            diffs.append((i, a, b))
-    counts = "  ".join(f"{k.decode()} {n}" for k, n in sorted(kinds.items()))
-    if diffs:
-        print(f"PARITY FAIL: {len(diffs)} differing lines (C++ {len(cpp)}, Python {len(py)}; {counts})")
-        for i, a, b in diffs[:5]:
-            print(f"  line {i}\n    C++:    {a.decode('utf-8', 'replace') if a else None}"
-                  f"\n    Python: {b.decode('utf-8', 'replace') if b else None}")
+    sides = {"C++": cpp_lines(), "Python": python_lines()}
+    problems = []
+    for side, lines in sides.items():
+        got = count_kinds(lines)
+        for kind, want in EXPECTED.items():
+            if got[kind] != want:
+                problems.append(f"{side} has {got[kind]} {kind} lines, expected {want}")
+        for kind in sorted(set(got) - set(EXPECTED)):
+            problems.append(f"{side} has {got[kind]} lines of unknown kind {kind!r}")
+    cpp, py = sides["C++"], sides["Python"]
+    # Multiset difference, so one missing line does not shift every later position.
+    only_cpp = sorted((Counter(cpp) - Counter(py)).elements())
+    only_py = sorted((Counter(py) - Counter(cpp)).elements())
+    counts = "  ".join(f"{k} {n}" for k, n in count_kinds(cpp).items())
+    if problems or only_cpp or only_py:
+        print(f"PARITY FAIL: C++ {len(cpp)} lines, Python {len(py)} lines; {len(only_cpp)} only in C++, {len(only_py)} only in Python")
+        for p in problems:
+            print(f"  count: {p}")
+        for label, only in (("only in C++", only_cpp), ("only in Python", only_py)):
+            for l in only[:5]:
+                print(f"  {label}: {l.decode('utf-8', 'replace')}")
         return 1
     print(f"PARITY OK: {len(cpp)} lines identical  ({counts})")
     return 0
