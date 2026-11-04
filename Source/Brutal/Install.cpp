@@ -32,12 +32,14 @@ void Install::Add(Dfpf::Bundle bundle, uint32_t fileIndex, std::shared_ptr<const
 void Install::Index() {
     m_byPath.clear();
     m_byRange.clear();
+    sharedRanges.clear();
     for (size_t i = 0; i < m_refs.size(); ++i) {
         const Dfpf::Record& rec = RecordOf(m_refs[i]);
         std::string key = rec.Path();
         std::transform(key.begin(), key.end(), key.begin(), Lower);
         m_byPath.emplace(std::move(key), i);  // first bundle wins
-        m_byRange.emplace(std::make_tuple(m_refs[i].fileIndex, rec.offset, uint64_t(rec.storedSize)), i);
+        const auto at = m_byRange.emplace(std::make_tuple(m_refs[i].fileIndex, rec.offset, uint64_t(rec.storedSize)), i);
+        if (!at.second) sharedRanges.emplace_back(RecordOf(m_refs[at.first->second]).Path(), rec.Path());
     }
 }
 

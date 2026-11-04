@@ -249,6 +249,45 @@ TEST_CASE("SiblingsJoinOneDocument") {
     REQUIRE(bytes);
     CHECK(*bytes == Pattern(40, 1));
     CHECK(doc->diags.Count(Severity::Warning) == 0);
+    const auto* leaf = Find(doc->roots, "worlds/w1/tex.Texture");
+    REQUIRE(leaf);
+    CHECK(leaf->subtitle == "Texture \xC2\xB7 b");
+}
+
+TEST_CASE("ZeroSizeZlib") {
+    TempDir dir("zero");
+    Item zero = MakeItem("e", "Mesh", 0, 0, 0, Dfpf::Compression::Zlib);
+    const auto header = WriteBundle(dir.path(), {"a", {}, {zero}});
+    auto ws = NewWorkspace();
+    Document* doc = OpenDoc(*ws, header);
+    const auto install = InstallOfDoc(*doc);
+    REQUIRE(install);
+    const RecordRef* ref = install->Find("e.Mesh");
+    REQUIRE(ref);
+    CHECK(install->RecordOf(*ref).storedSize > 0);
+    const auto bytes = install->Read(*ref, doc->diags);
+    REQUIRE(bytes);
+    CHECK(bytes->empty());
+    CHECK(doc->diags.Count(Severity::Error) == 0);
+}
+
+TEST_CASE("SharedRangeReported") {
+    TempDir dir("shared");
+    Item a = MakeItem("p", "Mesh", 8, 1);
+    Item b = MakeItem("q", "Mesh", 8, 1);
+    b.offset = 0;  // the same stored range as p
+    const auto header = WriteBundle(dir.path(), {"a", {}, {a, b, MakeItem("r", "Mesh", 8, 2)}});
+    auto ws = NewWorkspace();
+    Document* doc = OpenDoc(*ws, header);
+    CHECK(Count(*doc, "bl.dfpf.overlap") == 1);
+    for (const auto& d : doc->diags.Snapshot()) {
+        if (d.code != "bl.dfpf.overlap") continue;
+        CHECK(d.severity == Severity::Warning);
+        CHECK(d.message.find("p.Mesh") != std::string::npos);
+        CHECK(d.message.find("q.Mesh") != std::string::npos);
+    }
+    CHECK(Find(doc->roots, "p.Mesh"));
+    CHECK(Find(doc->roots, "q.Mesh"));  // the tree keeps both leaves
 }
 
 TEST_CASE("LoneBundleIsScoped") {

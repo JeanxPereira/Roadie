@@ -39,9 +39,10 @@
 //     bytes 14..17 ((BE u32 << 4) >> 24) >> 1  type index (only bytes 14 and 15 contribute)
 //     byte 15 & 15                          compression: 4 raw, 8 zlib, 12 xmem
 //
-// Unpacking (assumption, stricter than the Python decoder, which checks no sizes): a raw payload
-// is exactly header + data bytes, and a zlib stream inflates to exactly header + data bytes.
-// Xmem appears only in Xbox 360 bundles and is not decoded.
+// Unpacking (fact, stricter than the Python decoder, which checks no sizes): a raw payload is
+// exactly header + data bytes and a zlib stream inflates to exactly header + data bytes, for all
+// 71,095 records of the Steam install. Gate: Tests/Corpus/DfpfGate.cpp (Task 4). Xmem appears
+// only in Xbox 360 bundles and is not decoded.
 namespace Brutal::Dfpf {
 
 enum class Compression : uint8_t { Raw = 4, Zlib = 8, Xmem = 12 };

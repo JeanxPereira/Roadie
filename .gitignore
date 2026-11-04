@@ -8,3 +8,4 @@ __pycache__/
 References/
 .blender-bin/
 build/
+*.actual

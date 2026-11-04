@@ -144,6 +144,7 @@ std::optional<std::vector<std::byte>> Unpack(const Record& record, std::span<con
             return std::vector<std::byte>(stored.begin(), stored.end());
         case Compression::Zlib: {
             std::vector<std::byte> out(static_cast<size_t>(want));
+            std::byte scratch{};  // inflate needs a non-null output pointer even for an empty result
             z_stream zs{};
             if (inflateInit(&zs) != Z_OK) {
                 report("bl.dfpf.inflate", "inflateInit failed");
@@ -151,8 +152,8 @@ std::optional<std::vector<std::byte>> Unpack(const Record& record, std::span<con
             }
             zs.next_in = reinterpret_cast<Bytef*>(const_cast<std::byte*>(stored.data()));
             zs.avail_in = uInt(stored.size());
-            zs.next_out = reinterpret_cast<Bytef*>(out.data());
-            zs.avail_out = uInt(out.size());
+            zs.next_out = reinterpret_cast<Bytef*>(out.empty() ? &scratch : out.data());
+            zs.avail_out = uInt(out.size());  // 0 for an empty result, which Z_FINISH still completes
             const int rc = inflate(&zs, Z_FINISH);
             const uint64_t produced = zs.total_out;
             inflateEnd(&zs);

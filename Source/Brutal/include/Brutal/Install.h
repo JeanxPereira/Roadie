@@ -16,6 +16,7 @@
 #include <string_view>
 #include <tuple>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 // The bundles of one install as one resource namespace (the Python Library). A resource path is
@@ -38,6 +39,9 @@ public:
     std::vector<std::shared_ptr<const Onyx::Vfs::IFile>> payloads;
     // Per bundle: its .~p could be opened.
     std::vector<bool> payloadPresent;
+    // Filled by Index(): (first, later) paths of records sharing one (file, offset, stored size) range.
+    // At() resolves such a range to the first record only.
+    std::vector<std::pair<std::string, std::string>> sharedRanges;
 
     // Appends a bundle whose payload is files[fileIndex]; call Index() once all are added.
     void Add(Dfpf::Bundle bundle, uint32_t fileIndex, std::shared_ptr<const Onyx::Vfs::IFile> payload, bool present);

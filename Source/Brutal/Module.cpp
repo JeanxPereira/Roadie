@@ -146,6 +146,10 @@ Modules::ParseResult Module::ParseContainer(Modules::ContainerContext& ctx) {
     }
     install->Index();
     if (install->bundles.empty()) return {false};
+    for (const auto& [first, later] : install->sharedRanges) {
+        Report(ctx.diags, Services::Severity::Warning, "bl.dfpf.overlap",
+               first + " and " + later + " share one stored range; decoding resolves it to " + first);
+    }
 
     TrieNode root;
     for (uint32_t b = 0; b < install->bundles.size(); ++b) {
@@ -156,7 +160,7 @@ Modules::ParseResult Module::ParseContainer(Modules::ContainerContext& ctx) {
             Domain::AssetEntry leaf;
             const std::vector<std::string> parts = Segments(rec.name);
             leaf.name = (parts.empty() ? rec.name : parts.back()) + "." + rec.type;
-            leaf.subtitle = rec.type + " Â· " + bundle.name;
+            leaf.subtitle = rec.type + " \xC2\xB7 " + bundle.name;
             leaf.source = {fileIndex, rec.offset, rec.storedSize};
             leaf.type = m_resource;
             leaf.kind = Domain::MediaKind::Raw;
