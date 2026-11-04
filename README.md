@@ -30,7 +30,7 @@ Each format is taken from two sources at once: the bundles in `Win/Packs` (71,09
 `BrutalLegend.exe` under IDA 9.4 headless. A field is only written down when a **corpus gate**
 proves it over every resource of its type: byte budgets that close exactly, headers that match the
 size the game's own packer recorded, indices that stay in range. Then it becomes a decoder in
-`Brutal/`, and the Blender extension builds on the decoder.
+`Blender/BrutalLegend/Brutal/`, and the Blender extension builds on the decoder.
 
 <p align="center"><img src="Docs/Images/pipeline.svg" alt="pipeline" width="100%"></p>
 
@@ -66,7 +66,7 @@ A release is a tag: bump `version` in `Blender/BrutalLegend/blender_manifest.tom
 GitHub release and republishes the extensions repository on GitHub Pages. CI runs on every push
 without the game: compile, build, Blender's manifest validation and a headless install + enable.
 
-The game path defaults to the Steam library in `Brutal/paths.py`; override with `BL_GAME_DIR`.
+The game path defaults to the Steam library in `Blender/BrutalLegend/Brutal/paths.py`; override with `BL_GAME_DIR`.
 
 ## <img src="Docs/Images/h-use.svg" alt="Use" width="100%">
 
@@ -87,12 +87,12 @@ everything including cutscenes and mounts) and click through them in the sidebar
 **Command line**
 
 ```sh
-python -m Brutal types
-python -m Brutal ls "*a01_avatar/rig/*"
-python -m Brutal info characters/bipeds/a01_avatar/rig/a01_avatar.Mesh
-python -m Brutal extract "*a01_avatar/textures/*" -t Texture -o out --convert
-python -m Brutal ui fonts -o fonts
-python -m Brutal ui render Pause -o pause.svg --label justMenu --settle
+python Tools/brutal.py types
+python Tools/brutal.py ls "*a01_avatar/rig/*"
+python Tools/brutal.py info characters/bipeds/a01_avatar/rig/a01_avatar.Mesh
+python Tools/brutal.py extract "*a01_avatar/textures/*" -t Texture -o out --convert
+python Tools/brutal.py ui fonts -o fonts
+python Tools/brutal.py ui render Pause -o pause.svg --label justMenu --settle
 ```
 
 ## <img src="Docs/Images/h-ui.svg" alt="The UI" width="100%">
@@ -122,7 +122,7 @@ IDA addresses: [Docs/Formats/ui.md](Docs/Formats/ui.md).
 |---|---|
 | Format reference | [Docs/formats.md](Docs/formats.md), [anim](Docs/Formats/anim.md), [shaders](Docs/Formats/shaders.md), [ui](Docs/Formats/ui.md) |
 | Asset roadmap | [Docs/assets.md](Docs/assets.md) |
-| Decoders | `Brutal/` |
+| Decoders | `Blender/BrutalLegend/Brutal/` |
 | Gates | `Tests/`, `check.py` |
 | Blender extension | `Blender/BrutalLegend/` |
 | IDA headless tooling | `Tools/Ida/` |

@@ -1,6 +1,6 @@
 # Shaders (`win/shaders/*.fxo`) and the material/lighting math
 
-Decoder: `Brutal/shaders.py`. Gate: `Tests/corpus_shaders.py`. Disassembly dump:
+Decoder: `Blender/BrutalLegend/Brutal/shaders.py`. Gate: `Tests/corpus_shaders.py`. Disassembly dump:
 `python Tools/Shaders/disasm.py [container ...]` writes
 `.evidence/shaders/<container>/<index>_<stage>_<first technique>.asm` plus `techniques.txt`
 (technique -> VS file, PS file, render state). Every asm citation below uses those file names.
@@ -429,9 +429,9 @@ the albedo texture, which is a 3-channel mask; spec colour comes from Ramp2. Alp
 ## 6. Engine-side constants (from BrutalLegend.exe)
 
 Everything in this section was read in the IDA database (functions renamed there, addresses
-below). Implemented in `Brutal/shaders.py`: `material_constants(props, damage=0.0, ...)`,
+below). Implemented in `Blender/BrutalLegend/Brutal/shaders.py`: `material_constants(props, damage=0.0, ...)`,
 `weather_constants(weather, elevation=90, sun_rsa=None)`, `resolve_options`, `sun_direction`,
-`specular_bucket`; RSA gradients in `Brutal/rsalight.py`. Gate: `Tests/corpus_shaders.py`
+`specular_bucket`; RSA gradients in `Blender/BrutalLegend/Brutal/rsalight.py`. Gate: `Tests/corpus_shaders.py`
 resolves **2748/2748** materials to a technique that exists (RenderMesh/RenderHair through the
 full option logic, static and skinned; the other shaders by base name).
 
@@ -617,7 +617,7 @@ runtime scales whose source was not identified [open; 1 assumed]. With the shade
 this gives fog = (1 - exp((x - min(dist, y)) * density)) * (minDensity + h*(1 - minDensity)).
 Game space is Y-up; Blender (x, -z, y).
 
-### 6.6 RSA light gradients (`Brutal/rsalight.py`)
+### 6.6 RSA light gradients (`Blender/BrutalLegend/Brutal/rsalight.py`)
 
 `lighting/textures/rsalights/*_rsa.Texture` (16): 0x10 width 256, height 16, mips 2; 0x20 bytes
 `_ASR`; 0x24 8 floats = specular normalisation per bucket (simplesun's equal the exe table);
@@ -658,7 +658,7 @@ times g_vSkyLightDiffuseColor.
    SunLight gradient image are not used by the mesh shaders that were read.
 5. Tangent sign convention vs Blender: the game puts the handedness on the X (tangent) term and
    uses B = cross(N, T); Blender puts it on B. Check against a mirrored mesh. The 8 bytes after
-   the normal in the static vertex (+16) and skinned vertex (+32), unparsed by `Brutal/mesh.py`,
+   the normal in the static vertex (+16) and skinned vertex (+32), unparsed by `Blender/BrutalLegend/Brutal/mesh.py`,
    are presumably the TANGENT input [inferred].
 6. Sampler flag bit0 = SRGBTexture is inferred (it is also set on ScreenNormal/ScreenImage).
 7. g_vMapTilingVertex.x (DiffuseTiling) multiplies the hair glow term, and hair albedo uses

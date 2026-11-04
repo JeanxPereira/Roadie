@@ -5,7 +5,7 @@ import glob
 import os
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "Blender", "BrutalLegend"))
 from Brutal.dfpf import Bundle
 from Brutal.paths import packs_dir
 

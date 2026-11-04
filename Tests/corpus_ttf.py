@@ -1,4 +1,4 @@
-"""Corpus gate for the TrueType export (`Brutal/ttf.py`).
+"""Corpus gate for the TrueType export (`Blender/BrutalLegend/Brutal/ttf.py`).
 
 Every DefineFont3 of the shared font movie named by FlashConfig (Schreibweise, TG_Menu,
 TG_Condensed) is exported and re-read by an independent strict parser:
@@ -24,7 +24,7 @@ import os
 import struct
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "Blender", "BrutalLegend"))
 from Brutal import gfx, textobj, ttf
 from Brutal.library import Library
 

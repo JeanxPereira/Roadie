@@ -15,7 +15,7 @@ import sys
 from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, ROOT)
+sys.path.insert(0, os.path.join(ROOT, "Blender", "BrutalLegend"))
 from Brutal import gfx, paths, texture  # noqa: E402
 from Brutal.library import Library  # noqa: E402
 
@@ -158,7 +158,7 @@ NODES = {  # key: (x, y, w, h, accent, title, lines)
     "brutal": (450, 120, 330, 180, BONE, "Brutal/  (stdlib)", ["dfpf • mesh • rig • texture", "material • anim • shaders",
                                                                "rsalight • textobj • gfx"]),
     "gates": (900, 20, 340, 100, BLOOD, "Corpus gates", ["check.py: the exit code is the verdict"]),
-    "cli": (900, 150, 340, 100, STEEL, "python -m Brutal", ["types • ls • info • extract"]),
+    "cli": (900, 150, 340, 100, STEEL, "python Tools/brutal.py", ["types • ls • info • extract"]),
     "blender": (900, 280, 340, 120, EMBER, "Roadie for Blender 5.2", ["mesh • rig • game shading", "weather • animation"]),
 }
 EDGES = [("packs", "brutal"), ("exe", "brutal"), ("brutal", "gates"), ("brutal", "cli"), ("brutal", "blender")]

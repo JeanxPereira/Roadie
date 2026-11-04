@@ -2,7 +2,7 @@
 
 Everything the PC install holds, measured on 2026-10-29 (census of all 71,095 bundle resources in
 89 types, plus the loose `Data/` and `Win/Audio` folders). Status: **done** = decoder + corpus gate;
-**parse** = generic text-object parser reads it (`Brutal/textobj.py`, 11,678/11,678 in 69 types)
+**parse** = generic text-object parser reads it (`Blender/BrutalLegend/Brutal/textobj.py`, 11,678/11,678 in 69 types)
 but nothing builds on it yet; **todo** = binary, undecoded.
 
 ## 1. Characters, props, vehicles
@@ -75,7 +75,7 @@ but nothing builds on it yet; **todo** = binary, undecoded.
 | Area | Types / files | Status |
 |---|---|---|
 | Audio | `Win/Audio` 4.1 GB FMOD banks (DoubleFine Explorer already decodes FSB), AudioWavebankData/Markers, MusicSet, PlaylistResource, AudioEnvironment | parse (metadata) |
-| UI | DUIMovie (79), FlashConfig, `Data/UI` 80 Scaleform movies (+ 159 Bink), HUDSkin, AlbumCover | **done** for movies, external images and fonts (`Brutal/gfx.py`, `Tests/corpus_gfx.py`); timelines/ActionScript not interpreted |
+| UI | DUIMovie (79), FlashConfig, `Data/UI` 80 Scaleform movies (+ 159 Bink), HUDSkin, AlbumCover | **done** for movies, external images and fonts (`Blender/BrutalLegend/Brutal/gfx.py`, `Tests/corpus_gfx.py`); timelines/ActionScript not interpreted |
 | Text | StringTable (40, all languages), Story, SystemLineCodes | parse |
 | Scripts | Blob (362: Lua bytecode, `Data/Config/*.lua`) | todo |
 | Gameplay | MissionData, Buff, TechTree, UnitInfos, RockSolo, EncounterTable, Difficulty, … (~30 types) | parse |

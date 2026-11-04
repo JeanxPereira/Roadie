@@ -1,4 +1,4 @@
-"""Package the Blender extension: Blender/BrutalLegend + Brutal/ vendored inside it.
+"""Package the Blender extension: Blender/BrutalLegend (the Brutal/ decoder lives inside it).
 
     python Tools/build_addon.py            -> dist/brutal_legend-<version>.zip
     python Tools/build_addon.py --dev DIR  -> also copy the unpacked package into DIR
@@ -11,17 +11,15 @@ import zipfile
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 ADDON = os.path.join(ROOT, "Blender", "BrutalLegend")
-LIB = os.path.join(ROOT, "Brutal")
 
 
 def files():
-    for base, prefix in ((ADDON, "brutal_legend"), (LIB, "brutal_legend/Brutal")):
-        for dp, dn, fn in os.walk(base):
-            dn[:] = [d for d in dn if d != "__pycache__"]
-            for f in fn:
-                if f.endswith((".py", ".toml")):
-                    src = os.path.join(dp, f)
-                    yield src, prefix + "/" + os.path.relpath(src, base).replace(os.sep, "/")
+    for dp, dn, fn in os.walk(ADDON):
+        dn[:] = [d for d in dn if d != "__pycache__"]
+        for f in fn:
+            if f.endswith((".py", ".toml")):
+                src = os.path.join(dp, f)
+                yield src, "brutal_legend/" + os.path.relpath(src, ADDON).replace(os.sep, "/")
 
 
 def main():

@@ -1,17 +1,17 @@
 """Command-line explorer for Brutal Legend bundles.
 
-    python -m Brutal types                         resource types and counts across all bundles
-    python -m Brutal ls [GLOB] [-t TYPE]           list resources (fnmatch on 'name.Type')
-    python -m Brutal info PATH                     what a resource contains (mesh/rig/texture/material)
-    python -m Brutal extract GLOB -o DIR [--convert]
+    python Tools/brutal.py types                         resource types and counts across all bundles
+    python Tools/brutal.py ls [GLOB] [-t TYPE]           list resources (fnmatch on 'name.Type')
+    python Tools/brutal.py info PATH                     what a resource contains (mesh/rig/texture/material)
+    python Tools/brutal.py extract GLOB -o DIR [--convert]
                                                    write resources to DIR; --convert turns textures
                                                    into .dds and materials into .txt
-    python -m Brutal ui fonts -o DIR [--all]       the shared UI fonts as TrueType (--all: also the
+    python Tools/brutal.py ui fonts -o DIR [--all]       the shared UI fonts as TrueType (--all: also the
                                                    fonts embedded in single movies)
-    python -m Brutal ui render MOVIE [-o FILE.svg] [--label L | --frame N] [--settle] [--background]
+    python Tools/brutal.py ui render MOVIE [-o FILE.svg] [--label L | --frame N] [--settle] [--background]
                                                    one frame of a UI movie (name or .gfx path) as SVG
 
-Game folder: BL_GAME_DIR (default Steam path in Brutal/paths.py).
+Game folder: BL_GAME_DIR (default Steam path in Blender/BrutalLegend/Brutal/paths.py).
 """
 
 import argparse
@@ -124,7 +124,7 @@ def cmd_ui_render(lib, a):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(prog="python -m Brutal", description=__doc__.split("\n")[0])
+    ap = argparse.ArgumentParser(prog="python Tools/brutal.py", description=__doc__.split("\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("types").set_defaults(fn=cmd_types)
     p = sub.add_parser("ls")

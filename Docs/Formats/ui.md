@@ -1,6 +1,6 @@
 # UI: Scaleform GFx movies, the Flash system, and how the game drives them
 
-Decoder: `Brutal/gfx.py` (movie container, tag stream, external images, exports/imports,
+Decoder: `Blender/BrutalLegend/Brutal/gfx.py` (movie container, tag stream, external images, exports/imports,
 DefineFont3 glyphs, shapes, morphs, edit texts, placements, sprites); gates: `Tests/corpus_gfx.py`,
 `Tests/corpus_render.py`, `Tests/corpus_ttf.py`. Offline rendering and font export: §13.
 This document describes the runtime system. Addresses are `BrutalLegend.exe` (Steam build); every
@@ -506,9 +506,9 @@ Other movie hosts:
 
 ## 13. Offline: frame rendering and font export
 
-Code: `Brutal/gfxsvg.py` (SVG of one root frame), `Brutal/image.py` (BC1/BC3 to RGBA, PNG
-writer), `Brutal/ttf.py` (DefineFont3 to TrueType); CLI `python -m Brutal ui render` and
-`python -m Brutal ui fonts`. Gates: `Tests/corpus_render.py`, `Tests/corpus_ttf.py`. None of this
+Code: `Blender/BrutalLegend/Brutal/gfxsvg.py` (SVG of one root frame), `Blender/BrutalLegend/Brutal/image.py` (BC1/BC3 to RGBA, PNG
+writer), `Blender/BrutalLegend/Brutal/ttf.py` (DefineFont3 to TrueType); CLI `python Tools/brutal.py ui render` and
+`python Tools/brutal.py ui fonts`. Gates: `Tests/corpus_render.py`, `Tests/corpus_ttf.py`. None of this
 is engine code; it reproduces what the data describes, with the gaps listed below.
 
 **Movie content in the corpus** (gate `Tests/corpus_render.py`, every tag of the 80 movies, root

@@ -7,16 +7,16 @@ functions they are a serializer pair; which one reads and which writes is not pi
 
 | Resource | Count | Decoder | Gate | IDA |
 |---|---:|---|---|---|
-| Bundle `.~h`/`.~p` (DFPF v5) | 20 | `Brutal/dfpf.py` | `Tests/corpus_dfpf.py`: 71,095/71,095 unpack to header+data | — |
-| Mesh | 7,711 | `Brutal/mesh.py` | `Tests/corpus_mesh.py`: 7,711/7,711 byte-exact, parsed header = record header | `hsem`/`lrtm` sub_64C5C0, sub_64C860; `tsbs` sub_64D0A0, sub_64D6B0; `BVXD` sub_66A5E0, sub_66A720 |
-| Rig | 302 | `Brutal/rig.py` | `Tests/corpus_rig_tex.py`: 302/302, parents precede children, 301 mesh↔rig palettes in range | — |
-| Texture | 10,672 | `Brutal/texture.py` | 10,656 DDS byte-exact; 16 `rsalights` are another subtype | `rtxT` sub_64E170 |
-| Material | 2,748 | `Brutal/material.py` | `Tests/corpus_material.py`: 2,748 parse, 11,247/11,247 texture refs resolve | — |
-| Text objects (69 types: MeshSet, Weather, LevelData, Cutscene, …) | 11,678 | `Brutal/textobj.py` | `Tests/corpus_textobj.py`: 11,678/11,678 parse | — |
-| UI movie (`.gfx`, Scaleform) + DUIMovie | 80 + 79 | `Brutal/gfx.py` | `Tests/corpus_gfx.py`: 80 parse to their length, bundle = disk, 1,664/1,664 external images resolve, FontMap fonts exist | see [ui.md](Formats/ui.md) |
-| UI movie content (shapes, morphs, edit texts, placements, sprites) → SVG | 80 | `Brutal/gfx.py`, `Brutal/gfxsvg.py`, `Brutal/image.py` | `Tests/corpus_render.py`: 43,059 character/placement tags decode to their length, 9,409/9,409 fill contours close, 480 renders (frame 0 + 160 labels, sprites unsettled and settled) with every character, bitmap, font and texture resolved; BC1/BC3 within 1 level of ImageMagick | see [ui.md](Formats/ui.md) §13 |
-| UI fonts (DefineFont3) → TrueType | 3 shared + 42 embedded | `Brutal/ttf.py` | `Tests/corpus_ttf.py`: checksums, loca, cmap, hmtx, kern re-read; every contour round-trips to the source outline | — |
-| AnimResource | 15,866 | `Brutal/anim.py` | `Tests/corpus_anim.py`: 15,866 parse, 34,370 chunks / 618,660 sections close, 9.86M quaternions unit | see [anim.md](Formats/anim.md) |
+| Bundle `.~h`/`.~p` (DFPF v5) | 20 | `Blender/BrutalLegend/Brutal/dfpf.py` | `Tests/corpus_dfpf.py`: 71,095/71,095 unpack to header+data | — |
+| Mesh | 7,711 | `Blender/BrutalLegend/Brutal/mesh.py` | `Tests/corpus_mesh.py`: 7,711/7,711 byte-exact, parsed header = record header | `hsem`/`lrtm` sub_64C5C0, sub_64C860; `tsbs` sub_64D0A0, sub_64D6B0; `BVXD` sub_66A5E0, sub_66A720 |
+| Rig | 302 | `Blender/BrutalLegend/Brutal/rig.py` | `Tests/corpus_rig_tex.py`: 302/302, parents precede children, 301 mesh↔rig palettes in range | — |
+| Texture | 10,672 | `Blender/BrutalLegend/Brutal/texture.py` | 10,656 DDS byte-exact; 16 `rsalights` are another subtype | `rtxT` sub_64E170 |
+| Material | 2,748 | `Blender/BrutalLegend/Brutal/material.py` | `Tests/corpus_material.py`: 2,748 parse, 11,247/11,247 texture refs resolve | — |
+| Text objects (69 types: MeshSet, Weather, LevelData, Cutscene, …) | 11,678 | `Blender/BrutalLegend/Brutal/textobj.py` | `Tests/corpus_textobj.py`: 11,678/11,678 parse | — |
+| UI movie (`.gfx`, Scaleform) + DUIMovie | 80 + 79 | `Blender/BrutalLegend/Brutal/gfx.py` | `Tests/corpus_gfx.py`: 80 parse to their length, bundle = disk, 1,664/1,664 external images resolve, FontMap fonts exist | see [ui.md](Formats/ui.md) |
+| UI movie content (shapes, morphs, edit texts, placements, sprites) → SVG | 80 | `Blender/BrutalLegend/Brutal/gfx.py`, `Blender/BrutalLegend/Brutal/gfxsvg.py`, `Blender/BrutalLegend/Brutal/image.py` | `Tests/corpus_render.py`: 43,059 character/placement tags decode to their length, 9,409/9,409 fill contours close, 480 renders (frame 0 + 160 labels, sprites unsettled and settled) with every character, bitmap, font and texture resolved; BC1/BC3 within 1 level of ImageMagick | see [ui.md](Formats/ui.md) §13 |
+| UI fonts (DefineFont3) → TrueType | 3 shared + 42 embedded | `Blender/BrutalLegend/Brutal/ttf.py` | `Tests/corpus_ttf.py`: checksums, loca, cmap, hmtx, kern re-read; every contour round-trips to the source outline | — |
+| AnimResource | 15,866 | `Blender/BrutalLegend/Brutal/anim.py` | `Tests/corpus_anim.py`: 15,866 parse, 34,370 chunks / 618,660 sections close, 9.86M quaternions unit | see [anim.md](Formats/anim.md) |
 
 ## DFPF bundles (`Win/Packs/*.~h` + `*.~p`)
 
@@ -138,11 +138,11 @@ three DefineFont3 (Schreibweise, TG_Menu, TG_Condensed; 159 glyphs, em = 1024 ×
 kerning present); `FontMap` maps the names movies import from `gfxfontlib.swf` (`$Fancy`, `$Menu`,
 `$Condensed`) to them. Engine side: [formats/ui.md](Formats/ui.md).
 
-Movie content is standard SWF 8 (layouts in the `Brutal/gfx.py` docstring): DefineShape 1–4,
+Movie content is standard SWF 8 (layouts in the `Blender/BrutalLegend/Brutal/gfx.py` docstring): DefineShape 1–4,
 DefineMorphShape 1–2, DefineEditText, DefineSprite, PlaceObject2/3, RemoveObject2, FrameLabel.
 The corpus uses only solid and bitmap fills (no gradients), Glow and DropShadow filters, blend
 modes multiply / add / screen, and no clip layer. A bitmap fill names either a DefineExternalImage
 of the movie, an id imported from `Shared/ControllerIcons.swf` (an external image of
 `PhysicalInputIcons.gfx`), or 65535 in a style no edge selects (gate: `Tests/corpus_render.py`).
-`Brutal/gfxsvg.py` renders a root frame to SVG and `Brutal/ttf.py` writes a DefineFont3 as a
+`Blender/BrutalLegend/Brutal/gfxsvg.py` renders a root frame to SVG and `Blender/BrutalLegend/Brutal/ttf.py` writes a DefineFont3 as a
 TrueType font; what each covers and leaves out: [formats/ui.md §13](Formats/ui.md).
