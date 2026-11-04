@@ -12,6 +12,9 @@ public:
     void RegisterTypes(Onyx::Types::TypeRegistrar& registrar) override;
     void RegisterDecoders(Onyx::Modules::DecoderRegistry& decoders) override;
     Onyx::Modules::ParseResult ParseContainer(Onyx::Modules::ContainerContext& ctx) override;
+
+private:
+    Onyx::Types::TypeId m_folder, m_resource;
 };
 
 }

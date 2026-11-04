@@ -1,0 +1,89 @@
+{
+  "roots": [
+    {
+      "name": "characters",
+      "key": "bl.folder",
+      "kind": "Container",
+      "size": 0,
+      "flags": 0,
+      "children": [
+        {
+          "name": "bipeds",
+          "key": "bl.folder",
+          "kind": "Container",
+          "size": 0,
+          "flags": 0,
+          "children": [
+            {
+              "name": "x.Mesh",
+              "key": "bl.resource",
+              "kind": "Raw",
+              "size": 40,
+              "flags": 0,
+              "children": []
+            },
+            {
+              "name": "x.Mesh",
+              "key": "bl.resource",
+              "kind": "Raw",
+              "size": 40,
+              "flags": 0,
+              "children": []
+            },
+            {
+              "name": "x.Skeleton",
+              "key": "bl.resource",
+              "kind": "Raw",
+              "size": 32,
+              "flags": 0,
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ui",
+      "key": "bl.folder",
+      "kind": "Container",
+      "size": 0,
+      "flags": 0,
+      "children": [
+        {
+          "name": "hud.Movie",
+          "key": "bl.resource",
+          "kind": "Raw",
+          "size": 16,
+          "flags": 0,
+          "children": []
+        }
+      ]
+    },
+    {
+      "name": "worlds",
+      "key": "bl.folder",
+      "kind": "Container",
+      "size": 0,
+      "flags": 0,
+      "children": [
+        {
+          "name": "w1",
+          "key": "bl.folder",
+          "kind": "Container",
+          "size": 0,
+          "flags": 0,
+          "children": [
+            {
+              "name": "tex.Texture",
+              "key": "bl.resource",
+              "kind": "Raw",
+              "size": 75,
+              "flags": 0,
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
