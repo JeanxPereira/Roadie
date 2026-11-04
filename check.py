@@ -9,8 +9,9 @@ import subprocess
 import sys
 import tempfile
 
+DEFAULT_GAME_DIR = r"D:\ProgramLibrary\Steam\steamapps\common\BrutalLegend"  # as Brutal/paths.py
 ROOT = os.path.dirname(os.path.abspath(__file__))
-GATES = ["Tests/corpus_dfpf.py", "Tests/corpus_mesh.py", "Tests/corpus_rig_tex.py",
+GATES = ["Tests/corpus_mesh.py", "Tests/corpus_rig_tex.py",
          "Tests/corpus_material.py", "Tests/corpus_textobj.py", "Tests/corpus_anim.py",
          "Tests/corpus_shaders.py", "Tests/corpus_gfx.py", "Tests/corpus_ttf.py",
          "Tests/corpus_render.py"]
@@ -69,6 +70,9 @@ def main():
         if run_in_vcvars(cmd):
             failed.append(name)
             break
+    if not failed and os.path.isdir(os.path.join(os.environ.get("BL_GAME_DIR", DEFAULT_GAME_DIR), "Win", "Packs")):
+        if run_in_vcvars(["ctest", "--preset", "windows-debug", "-L", "corpus", "--no-tests=error", "-V"]):
+            failed.append("corpus (C++)")
     failed += [g for g in GATES if os.path.exists(os.path.join(ROOT, g)) and run([sys.executable, g])]
     if "--blender" in sys.argv:
         out = os.path.join(ROOT, ".evidence", "renders", "check.png")

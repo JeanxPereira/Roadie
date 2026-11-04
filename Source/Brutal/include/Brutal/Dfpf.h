@@ -14,7 +14,7 @@
 
 // DFPF v5 bundles: Brutal Legend's `.~h` (header) + `.~p` (payload) pairs. The facts below are the
 // layout block of the Python decoder (Blender/BrutalLegend/Brutal/dfpf.py); the gate is the corpus
-// gate Tests/corpus_dfpf.py (71,095 records over the 21 bundles of the Steam install).
+// gate Tests/Corpus/DfpfGate.cpp (71,095 records over the 21 bundles of the Steam install).
 //
 // Layout (big-endian on PC too; the magic is stored as "dfpf"):
 //     0x00  "dfpf"

@@ -1,13 +1,13 @@
 # Brutal Legend PC file formats
 
 Every fact here is proven by a corpus gate (`python check.py`) over the whole Steam install
-(`Win/Packs`, 20 bundles, 71,095 resources), or marked as an assumption. IDA addresses refer to
+(`Win/Packs`, 21 bundles, 71,095 resources), or marked as an assumption. IDA addresses refer to
 `BrutalLegend.exe` (Steam build, 13,180,928 bytes, x86, no DRM wrapper). Where a tag is used by two
 functions they are a serializer pair; which one reads and which writes is not pinned yet.
 
 | Resource | Count | Decoder | Gate | IDA |
 |---|---:|---|---|---|
-| Bundle `.~h`/`.~p` (DFPF v5) | 20 | `Blender/BrutalLegend/Brutal/dfpf.py` | `Tests/corpus_dfpf.py`: 71,095/71,095 unpack to header+data | — |
+| Bundle `.~h`/`.~p` (DFPF v5) | 21 | `Source/Brutal/Dfpf.cpp` | `Tests/Corpus/DfpfGate.cpp`: 71,095/71,095 unpack to header+data, 21 bundles, no shared stored range | — |
 | Mesh | 7,711 | `Blender/BrutalLegend/Brutal/mesh.py` | `Tests/corpus_mesh.py`: 7,711/7,711 byte-exact, parsed header = record header | `hsem`/`lrtm` sub_64C5C0, sub_64C860; `tsbs` sub_64D0A0, sub_64D6B0; `BVXD` sub_66A5E0, sub_66A720 |
 | Rig | 302 | `Blender/BrutalLegend/Brutal/rig.py` | `Tests/corpus_rig_tex.py`: 302/302, parents precede children, 301 mesh↔rig palettes in range | — |
 | Texture | 10,672 | `Blender/BrutalLegend/Brutal/texture.py` | 10,656 DDS byte-exact; 16 `rsalights` are another subtype | `rtxT` sub_64E170 |

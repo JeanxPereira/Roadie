@@ -22,7 +22,7 @@
 // The bundles of one install as one resource namespace (the Python Library). A resource path is
 // "name.Type" ("characters/bipeds/x.Mesh"); lookup lower-cases it and turns "\" into "/". When two
 // bundles hold the same path the first bundle in sorted file-name order wins (Library.__init__ does
-// setdefault over sorted(glob)); the Steam install has no such path (Tests/corpus_dfpf.py).
+// setdefault over sorted(glob)); the Steam install has no such path (Tests/Corpus/DfpfGate.cpp).
 namespace Brutal {
 
 struct RecordRef {
