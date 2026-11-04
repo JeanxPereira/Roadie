@@ -1,0 +1,5 @@
+add_library(BrutalModule STATIC Module.cpp)
+add_library(Brutal::Module ALIAS BrutalModule)
+target_include_directories(BrutalModule PUBLIC include)
+target_link_libraries(BrutalModule PUBLIC Onyx::Core)
+set_target_properties(BrutalModule PROPERTIES CXX_SCAN_FOR_MODULES OFF)
