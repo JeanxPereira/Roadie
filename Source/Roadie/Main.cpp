@@ -1,10 +1,11 @@
 // Roadie: the Onyx Shell hosting the Brütal Legend module.
 #include <Brutal/Module.h>
 
-#include "InstallPath.h"
+#include <Brutal/InstallPath.h>
 #include "Verbs.h"
 
 #include <filesystem>
+#include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
@@ -58,11 +59,15 @@ int main(int argc, char** argv) {
         const std::string first = FirstArgUtf8(argc, argv);
         std::error_code ec;
         const std::filesystem::path folder = Onyx::Services::Paths::FromUtf8(first);
-        if (!first.empty() && std::filesystem::is_directory(folder, ec)) {
-            if (const auto header = Roadie::ResolveInstallPath(folder)) {
-                storage = {argv[0], Onyx::Services::Paths::ToUtf8(*header)};
-                args = {storage[0].data(), storage[1].data()};
+        // A verb name wins over a folder of the same name.
+        if (!first.empty() && !shell.Verbs().Find(first) && std::filesystem::is_directory(folder, ec)) {
+            const auto header = Brutal::ResolveInstallPath(folder);
+            if (!header) {
+                std::cerr << "no Brütal Legend bundles under " << first << "\n";
+                return 2;
             }
+            storage = {argv[0], Onyx::Services::Paths::ToUtf8(*header)};
+            args = {storage[0].data(), storage[1].data()};
         }
     }
     return shell.Run(int(args.size()), args.data());

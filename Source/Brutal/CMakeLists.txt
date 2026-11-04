@@ -1,4 +1,4 @@
-add_library(BrutalModule STATIC Module.cpp Dfpf.cpp Install.cpp Texture.cpp)
+add_library(BrutalModule STATIC Module.cpp Dfpf.cpp Install.cpp InstallPath.cpp Texture.cpp)
 add_library(Brutal::Module ALIAS BrutalModule)
 target_include_directories(BrutalModule PUBLIC include)
 target_link_libraries(BrutalModule PUBLIC Onyx::Core)

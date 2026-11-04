@@ -9,7 +9,7 @@
 #include <Brutal/Module.h>
 #include <Brutal/Texture.h>
 
-#include <InstallPath.h>
+#include <Brutal/InstallPath.h>
 #include <Verbs.h>
 
 #include <Onyx/Core/Cli/Json.h>
@@ -210,6 +210,20 @@ TEST_CASE("ExtractReportsFailuresAndContinues") {
     CHECK(ReadAll(out / "good" / "one.Mesh") == Pattern(8, 2));
 }
 
+TEST_CASE("ExtractConvertNotDdsWritesRawAndSaysWhy") {
+    TempDir dir("vextnd");
+    const fs::path packs = dir / "Win" / "Packs";
+    fs::create_directories(packs);
+    WriteBundle(packs, {"a", {}, {MakeItem("worlds/w1/broken", "Texture", 64, 9)}});
+    const fs::path out = dir / "out";
+    const Captured c = Run({"extract", "*", "--convert", "-o", Onyx::Services::Paths::ToUtf8(out)}, dir.path());
+    CHECK(c.rc == Onyx::Cli::kOk);
+    CHECK(c.out == "1 written\n");
+    CHECK(ReadAll(out / "worlds" / "w1" / "broken.Texture") == Pattern(64, 9));
+    CHECK(c.err.find("worlds/w1/broken.Texture") != std::string::npos);
+    CHECK(c.err.find("not converted to .dds") != std::string::npos);
+}
+
 TEST_CASE("UsageErrors") {
     TempDir dir("vusage");
     WriteInstall(dir.path());
@@ -221,7 +235,7 @@ TEST_CASE("UsageErrors") {
 TEST_CASE("NonAsciiInstallPath") {
     TempDir plain("vascii");
     TempDir dir("vutf");
-    const fs::path game = dir.path() / Onyx::Services::Paths::FromUtf8("Br\xC3\xBCtal Legend");
+    const fs::path game = dir.path() / Onyx::Services::Paths::FromUtf8("Br\xC3\xBCtal \xE3\x82\xAE\xE3\x82\xBF\xE3\x83\xBC \xC5\x81");
     WriteInstall(plain.path());
     WriteInstall(game);
     const Captured a = Run({"ls"}, plain.path());
@@ -237,14 +251,14 @@ TEST_CASE("ResolveFolder") {
     WriteInstall(dir.path());
     const fs::path expected = dir / "Win" / "Packs" / "a.~h";
     const auto equal = [&](const std::optional<fs::path>& r) { return r && fs::equivalent(*r, expected); };
-    CHECK(equal(Roadie::ResolveInstallPath(dir.path())));
-    CHECK(equal(Roadie::ResolveInstallPath(dir.path() / "Win" / "Packs")));
-    CHECK(equal(Roadie::ResolveInstallPath(dir.path() / "Win" / "Packs" / "a.~p")));
+    CHECK(equal(Brutal::ResolveInstallPath(dir.path())));
+    CHECK(equal(Brutal::ResolveInstallPath(dir.path() / "Win" / "Packs")));
+    CHECK(equal(Brutal::ResolveInstallPath(dir.path() / "Win" / "Packs" / "a.~p")));
     // A .~p or .~h of another bundle stands for itself; the Module joins the siblings.
-    CHECK(Roadie::ResolveInstallPath(dir.path() / "Win" / "Packs" / "b.~p") == dir.path() / "Win" / "Packs" / "b.~h");
-    CHECK(equal(Roadie::ResolveInstallPath(expected)));
-    CHECK_FALSE(Roadie::ResolveInstallPath(dir.path() / "Win"));
-    CHECK_FALSE(Roadie::ResolveInstallPath(dir.path() / "missing"));
+    CHECK(Brutal::ResolveInstallPath(dir.path() / "Win" / "Packs" / "b.~p") == dir.path() / "Win" / "Packs" / "b.~h");
+    CHECK(equal(Brutal::ResolveInstallPath(expected)));
+    CHECK_FALSE(Brutal::ResolveInstallPath(dir.path() / "Win"));
+    CHECK_FALSE(Brutal::ResolveInstallPath(dir.path() / "missing"));
     std::ofstream(dir / "readme.txt") << "x";
-    CHECK_FALSE(Roadie::ResolveInstallPath(dir.path() / "readme.txt"));
+    CHECK_FALSE(Brutal::ResolveInstallPath(dir.path() / "readme.txt"));
 }

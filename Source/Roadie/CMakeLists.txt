@@ -2,8 +2,8 @@
 # point it at the fetched SDK for the call (a directory-scope variable, the SDK itself stays unpatched).
 set(PROJECT_SOURCE_DIR "${onyxsdk_SOURCE_DIR}")
 
-# The verbs and the install-path resolution, shared by the executable and the unit tests.
-add_library(RoadieVerbs STATIC Verbs.cpp InstallPath.cpp)
+# The verbs, shared by the executable and the unit tests.
+add_library(RoadieVerbs STATIC Verbs.cpp)
 target_include_directories(RoadieVerbs PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(RoadieVerbs PUBLIC Onyx::Core Brutal::Module)
 target_link_libraries(RoadieVerbs PRIVATE zlibstatic)  # crc32 for the parity digest

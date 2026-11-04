@@ -1,4 +1,4 @@
-#include "InstallPath.h"
+#include <Brutal/InstallPath.h>
 
 #include <Onyx/Core/Services/Paths.h>
 
@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-namespace Roadie {
+namespace Brutal {
 
 namespace fs = std::filesystem;
 

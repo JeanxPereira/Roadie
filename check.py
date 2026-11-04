@@ -70,13 +70,18 @@ def main():
         if run_in_vcvars(cmd):
             failed.append(name)
             break
-    if not failed and os.path.isdir(os.path.join(os.environ.get("BL_GAME_DIR", DEFAULT_GAME_DIR), "Win", "Packs")):
-        if run_in_vcvars(["ctest", "--preset", "windows-debug", "-L", "corpus", "--no-tests=error", "-V"]):
-            failed.append("corpus (C++)")
+    packs = os.path.join(os.environ.get("BL_GAME_DIR", DEFAULT_GAME_DIR), "Win", "Packs")
     parity = os.path.join(ROOT, "Tests", "parity.py")
-    if not failed and os.path.exists(parity) and os.path.isdir(os.path.join(os.environ.get("BL_GAME_DIR", DEFAULT_GAME_DIR), "Win", "Packs")):
-        if run([sys.executable, "Tests/parity.py"]):  # after the C++ build: it runs build/windows/Debug/roadie.exe
-            failed.append("parity")
+    if not failed:
+        if not os.path.isdir(packs):
+            print(f"--> skipped corpus and parity (no Win/Packs at {packs})", flush=True)
+        else:
+            if run_in_vcvars(["ctest", "--preset", "windows-debug", "-L", "corpus", "--no-tests=error", "-V"]):
+                failed.append("corpus (C++)")
+            if "corpus (C++)" in failed:
+                print("--> skipped parity (corpus failed)", flush=True)
+            elif os.path.exists(parity) and run([sys.executable, "Tests/parity.py"]):  # after the C++ build: it runs build/windows/Debug/roadie.exe
+                failed.append("parity")
     failed += [g for g in GATES if os.path.exists(os.path.join(ROOT, g)) and run([sys.executable, g])]
     if "--blender" in sys.argv:
         out = os.path.join(ROOT, ".evidence", "renders", "check.png")

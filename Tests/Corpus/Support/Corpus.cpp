@@ -1,6 +1,9 @@
 #include "Corpus.h"
 
+#include <Brutal/InstallPath.h>
 #include <Brutal/Module.h>
+
+#include <Onyx/Core/Services/Paths.h>
 
 #include <algorithm>
 #include <cstdlib>
@@ -11,8 +14,6 @@ namespace Corpus {
 
 namespace {
 
-constexpr const char* kDefaultGameDir = R"(D:\ProgramLibrary\Steam\steamapps\common\BrutalLegend)";
-
 void Walk(const std::vector<Onyx::Domain::AssetEntry>& level, const std::function<void(const Onyx::Domain::AssetEntry&)>& fn) {
     for (const auto& e : level) {
         if (e.children.empty()) fn(e);
@@ -22,31 +23,22 @@ void Walk(const std::vector<Onyx::Domain::AssetEntry>& level, const std::functio
 
 }
 
-std::filesystem::path PacksDir() {
-    const char* env = std::getenv("BL_GAME_DIR");
-    return std::filesystem::path(env && *env ? env : kDefaultGameDir) / "Win" / "Packs";
-}
-
 std::unique_ptr<Opened> OpenInstall() {
-    const std::filesystem::path dir = PacksDir();
-    std::vector<std::filesystem::path> headers;
-    std::error_code ec;
-    for (std::filesystem::directory_iterator it(dir, ec), end; !ec && it != end; it.increment(ec)) {
-        if (it->path().extension() == ".~h") headers.push_back(it->path());
-    }
-    if (headers.empty()) {
-        std::cerr << "no *.~h in " << dir.string() << " (set BL_GAME_DIR)\n";
+    const std::filesystem::path game = Brutal::DefaultInstall();
+    const std::string shown = Onyx::Services::Paths::ToUtf8(game);
+    const auto header = Brutal::ResolveInstallPath(game);
+    if (!header) {
+        std::cerr << "no *.~h under " << shown << " (set BL_GAME_DIR)\n";
         return nullptr;
     }
-    std::sort(headers.begin(), headers.end());
     auto opened = std::make_unique<Opened>();
     if (!opened->ws.AddModule(std::make_unique<Brutal::Module>()).ok()) {
         std::cerr << "cannot register Brutal::Module\n";
         return nullptr;
     }
-    opened->id = opened->ws.Open(headers.front());
+    opened->id = opened->ws.Open(*header);
     if (opened->id == 0 || !opened->ws.Get(opened->id)) {
-        std::cerr << "cannot open " << headers.front().string() << "\n";
+        std::cerr << "cannot open " << Onyx::Services::Paths::ToUtf8(*header) << "\n";
         return nullptr;
     }
     return opened;

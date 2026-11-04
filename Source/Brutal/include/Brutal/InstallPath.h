@@ -5,7 +5,7 @@
 
 // Which file opens an install. The Module joins every sibling .~h into one document, so any one
 // header stands for the whole install.
-namespace Roadie {
+namespace Brutal {
 
 // A .~h as given; a .~p -> its .~h (when it exists); a folder holding Win/Packs, or holding *.~h
 // itself -> its first *.~h in file-name byte order; anything else -> nullopt.

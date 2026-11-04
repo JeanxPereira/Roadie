@@ -13,15 +13,12 @@
 // Shared by the corpus gates: the game install, opened through a real Workspace with Brutal::Module.
 namespace Corpus {
 
-// BL_GAME_DIR or the default Steam path, + Win/Packs.
-std::filesystem::path PacksDir();
-
 struct Opened {
     Onyx::Modules::Workspace ws;
     Onyx::Modules::DocumentId id = 0;
 };
 
-// Opens the first *.~h of PacksDir(); null (with a message on stderr) when there is none or the open fails.
+// Opens the install at Brutal::DefaultInstall() (BL_GAME_DIR or the Steam path) through Brutal::ResolveInstallPath; null (with a message on stderr) when there is none or the open fails.
 std::unique_ptr<Opened> OpenInstall();
 
 // Calls `fn` for every leaf (an entry without children) of the document's tree.
