@@ -14,7 +14,7 @@ public:
     Onyx::Modules::ParseResult ParseContainer(Onyx::Modules::ContainerContext& ctx) override;
 
 private:
-    Onyx::Types::TypeId m_folder, m_resource;
+    Onyx::Types::TypeId m_folder, m_resource, m_texture, m_rsalight;
 };
 
 }

@@ -1,4 +1,4 @@
-add_executable(RoadieUnit Main.cpp ModuleTests.cpp DfpfTests.cpp Support/DfpfWriter.cpp)
+add_executable(RoadieUnit Main.cpp ModuleTests.cpp DfpfTests.cpp TextureTests.cpp Support/DfpfWriter.cpp)
 target_link_libraries(RoadieUnit PRIVATE Brutal::Module Onyx::TestKit zlibstatic doctest::doctest)
 target_compile_definitions(RoadieUnit PRIVATE ROADIE_GOLDEN_DIR="${CMAKE_CURRENT_SOURCE_DIR}/Golden")
 set_target_properties(RoadieUnit PROPERTIES CXX_SCAN_FOR_MODULES OFF)

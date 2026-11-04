@@ -110,6 +110,12 @@ Header part `0x24`: `+0x08` engine format (9 DXT1, 11 DXT5), `+0x10` width, `+0x
 **DXT5nm** (X in alpha, Y in green, R = B = 0; measured on the avatar maps). Green-channel
 convention (DirectX vs OpenGL) is **not verified** yet.
 
+The 10,656 DDS split (Steam install, 2026-11-03): DXT5 5,405 (3,663 with mips), DXT1 1,917, uncompressed
+R5G6B5 1,667 (engine format 5, masks `f800/07e0/001f`) and A4R4G4B4 1,667 (engine format 2, masks
+`0f00/00f0/000f/f000`); both 16-bit sets are under `worlds/`. DDS offsets: height `0x0C`, width `0x10`,
+mips `0x1C`, pixel format `0x4C` (flags `0x50`, FourCC `0x54`, bits `0x58`, masks `0x5C..0x68`), top mip at
+`0x80`. The C++ decoder (`Source/Brutal/Texture.cpp`) shows the top mip. The 16 `rsalights` are Raw.
+
 ## Material
 
 `u32 length` + text `1Material{Key=Value;...}`. Values: numbers, `<x,y,z>` vectors, `@path`

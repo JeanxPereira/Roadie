@@ -75,8 +75,8 @@
           "children": [
             {
               "name": "tex.Texture",
-              "key": "bl.resource",
-              "kind": "Raw",
+              "key": "bl.texture",
+              "kind": "Image",
               "size": 75,
               "flags": 0,
               "children": []

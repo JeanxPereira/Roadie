@@ -2,6 +2,7 @@
 
 #include <Brutal/Dfpf.h>
 #include <Brutal/Install.h>
+#include <Brutal/Texture.h>
 
 #include <Onyx/Core/Modules/DecoderRegistry.h>
 #include <Onyx/Core/Modules/Document.h>
@@ -107,10 +108,14 @@ void Module::RegisterTypes(Types::TypeRegistrar& registrar) {
     };
     m_folder = add("folder", "Folder", Domain::MediaKind::Container, {0.85f, 0.70f, 0.30f, 1.0f});
     m_resource = add("resource", "Resource", Domain::MediaKind::Raw, {0.60f, 0.60f, 0.65f, 1.0f});
+    m_texture = add("texture", "Texture", Domain::MediaKind::Image, {0.40f, 0.70f, 0.85f, 1.0f});
+    m_rsalight = add("rsalight", "Baked light", Domain::MediaKind::Raw, {0.90f, 0.80f, 0.40f, 1.0f});
 }
 
 // bl.resource is Raw: the hex view is the default for every game type without a decoder of its own.
-void Module::RegisterDecoders(Modules::DecoderRegistry&) {}
+void Module::RegisterDecoders(Modules::DecoderRegistry& decoders) {
+    decoders.Image(m_texture, Texture::DecodeImage);
+}
 
 Modules::ParseResult Module::ParseContainer(Modules::ContainerContext& ctx) {
     auto install = std::make_shared<Install>();
@@ -164,6 +169,11 @@ Modules::ParseResult Module::ParseContainer(Modules::ContainerContext& ctx) {
             leaf.source = {fileIndex, rec.offset, rec.storedSize};
             leaf.type = m_resource;
             leaf.kind = Domain::MediaKind::Raw;
+            if (rec.type == "Texture") {
+                const bool light = Texture::IsRsaLight(rec.name);
+                leaf.type = light ? m_rsalight : m_texture;
+                leaf.kind = light ? Domain::MediaKind::Raw : Domain::MediaKind::Image;
+            }
             if (!install->payloadPresent[b]) {
                 leaf.flags = Domain::NodeFlags::Failed;
             } else if (rec.offset + rec.storedSize > payloadSize) {
