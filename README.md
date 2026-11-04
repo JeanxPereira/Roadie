@@ -55,7 +55,7 @@ size the game's own packer recorded, indices that stay in range. Then it becomes
 ## <img src="Docs/Images/h-build.svg" alt="Build" width="100%">
 
 ```sh
-python check.py                    # every corpus gate (needs the game)
+python check.py                    # build the C++, then unit, corpus and parity gates (corpus needs the game)
 python check.py --blender          # + import smoke test in the pinned Blender 5.2.3
 python Tools/build_addon.py        # dist/brutal_legend-<ver>.zip
 python Tools/readme_art.py         # this README's art, from the game's own fonts and emblems
@@ -65,6 +65,9 @@ A release is a tag: bump `version` in `Blender/BrutalLegend/blender_manifest.tom
 `vX.Y.Z`, and the release workflow validates the extension in Blender 5.2.3, attaches the zip to a
 GitHub release and republishes the extensions repository on GitHub Pages. CI runs on every push
 without the game: compile, build, Blender's manifest validation and a headless install + enable.
+
+`python check.py` needs Visual Studio's clang-cl, CMake and Ninja; it configures the `windows` preset
+and builds `windows-debug`. The program is `build/windows/<Config>/roadie.exe`.
 
 The game path defaults to the Steam library in `Blender/BrutalLegend/Brutal/paths.py`; override with `BL_GAME_DIR`.
 
@@ -85,6 +88,19 @@ or press *Import All Animations* to pull every clip made for that rig (the chara
 everything including cutscenes and mounts) and click through them in the sidebar list.
 
 **Command line**
+
+`roadie` (C++, on OnyxSDK) opens an install and lists or extracts its records. So far it covers
+the bundles and textures; meshes, rigs, materials, animations and the UI are still read by the
+Python decoder only.
+
+```sh
+roadie <game folder>
+roadie types
+roadie ls "*a01_avatar/rig/*"
+roadie extract "*a01_avatar/textures/*" -t Texture -o out --convert
+```
+
+The Python command line has the full set:
 
 ```sh
 python Tools/brutal.py types
@@ -122,8 +138,10 @@ IDA addresses: [Docs/Formats/ui.md](Docs/Formats/ui.md).
 |---|---|
 | Format reference | [Docs/formats.md](Docs/formats.md), [anim](Docs/Formats/anim.md), [shaders](Docs/Formats/shaders.md), [ui](Docs/Formats/ui.md) |
 | Asset roadmap | [Docs/assets.md](Docs/assets.md) |
-| Decoders | `Blender/BrutalLegend/Brutal/` |
+| Decoders | `Blender/BrutalLegend/Brutal/` (Python); `Source/Brutal/` (C++: bundles, textures) |
+| Roadie program | `Source/Roadie/` |
 | Gates | `Tests/`, `check.py` |
+| Design and plans | [Docs/Specs](Docs/Specs), [Docs/Plans](Docs/Plans) |
 | Blender extension | `Blender/BrutalLegend/` |
 | IDA headless tooling | `Tools/Ida/` |
 
